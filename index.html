@@ -14,16 +14,20 @@
     <header class="header">
         <nav class="nav">
             <div class="nav__logo">SANTALYS</div>
-            <button class="nav__toggle" aria-label="Toggle Navigation">
-                <span class="nav__toggle-line"></span>
-                <span class="nav__toggle-line"></span>
-                <span class="nav__toggle-line"></span>
-            </button>
-            <ul class="nav__links">
-                <li><a href="#perfume">PERFUME</a></li>
-                <li><a href="#diffuser">DIFFUSER</a></li>
-                <li><a href="#story">STORY</a></li>
-            </ul>
+            <div class="nav__right">
+                <ul class="nav__links">
+                    <li><a href="#perfume">PERFUME</a></li>
+                    <li><a href="#story">STORY</a></li>
+                </ul>
+                <a href="#" class="nav__cart">
+                    CART <span class="cart-count">0</span>
+                </a>
+                <button class="nav__toggle" aria-label="Toggle Navigation">
+                    <span class="nav__toggle-line"></span>
+                    <span class="nav__toggle-line"></span>
+                    <span class="nav__toggle-line"></span>
+                </button>
+            </div>
         </nav>
     </header>
 
@@ -39,8 +43,6 @@
                 <div class="hero__slide" style="background-image: url('https://images.unsplash.com/photo-1508615070457-7baeba4003ab?auto=format&fit=crop&q=80&w=1600')"></div>
                 <div class="hero__slide" style="background-image: url('https://images.unsplash.com/photo-1590736704728-f4730bb3c3af?auto=format&fit=crop&q=80&w=1600')"></div>
                 <div class="hero__slide" style="background-image: url('https://images.unsplash.com/photo-1615484477778-ca3b77940c25?auto=format&fit=crop&q=80&w=1600')"></div>
-                <div class="hero__slide" style="background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=1600')"></div>
-                <div class="hero__slide" style="background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1600')"></div>
             </div>
         </section>
 
@@ -50,20 +52,22 @@
                 <p class="section__desc">영감을 주는 향기의 컬렉션</p>
             </div>
             <div class="product-grid">
-                <!-- Web Component: <product-card> will be rendered here -->
                 <product-card 
+                    product-id="santal-01"
                     name="SANTAL 01" 
                     price="₩138,000" 
                     image="https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?auto=format&fit=crop&q=80&w=800"
                     desc="따스한 햇살이 머무는 숲, 샌달우드의 깊은 잔향">
                 </product-card>
                 <product-card 
+                    product-id="flowered-dusk"
                     name="FLOWERED DUSK" 
                     price="₩125,000" 
                     image="https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=800"
                     desc="정원의 푸르름과 야생화가 어우러진 우아함">
                 </product-card>
                 <product-card 
+                    product-id="morning-clay"
                     name="MORNING CLAY" 
                     price="₩118,000" 
                     image="https://images.unsplash.com/photo-1585120040315-2241b774ad0f?auto=format&fit=crop&q=80&w=800"
@@ -97,6 +101,32 @@
             <p>&copy; 2026 SANTALYS. All rights reserved.</p>
         </div>
     </footer>
+
+    <!-- Product Detail Overlay -->
+    <div class="detail-overlay">
+        <div class="detail-container">
+            <!-- Dynamic Content -->
+        </div>
+    </div>
+
+    <!-- Shopping Cart Drawer -->
+    <div class="cart-overlay"></div>
+    <div class="cart-drawer">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button class="cart-close">&times;</button>
+        </div>
+        <div class="cart-items">
+            <!-- Dynamic Content -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <span class="cart-total-value">₩0</span>
+            </div>
+            <button class="btn btn--secondary" onclick="alert('결제 기능은 데모 버전에서 지원되지 않습니다.');">CHECKOUT</button>
+        </div>
+    </div>
 
     <div class="noise-overlay"></div>
 </body>
