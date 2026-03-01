@@ -258,10 +258,29 @@
         font-weight: 400;
     }
 
-    .story__desc {
-        font-size: 1.1rem;
-        max-width: 500px;
+    .story__desc-container {
+        max-width: 550px;
+    }
+
+    .story__p {
+        font-size: 1.05rem;
+        line-height: 1.8;
+        margin-bottom: 1.8rem;
         opacity: 0.8;
+        word-break: keep-all;
+    }
+
+    .story__p:last-child {
+        margin-bottom: 0;
+    }
+
+    .story__p em {
+        font-family: var(--font-serif);
+        font-style: italic;
+        color: var(--text-color);
+        opacity: 1;
+        font-size: 1.15rem;
+        border-bottom: 1px solid rgba(26, 26, 26, 0.2);
     }
 
     .story__image img {
