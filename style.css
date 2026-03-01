@@ -4,7 +4,7 @@
     --accent-color: #3d3d3d;
     --font-serif: 'Cormorant Garamond', serif;
     --font-sans: 'Inter', sans-serif;
-    --font-story: 'Nanum Myeongjo', serif; /* Special font for brand story */
+    --font-story: 'Noto Serif KR', serif; /* Heavy and sensory font for brand story */
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;
     --spacing-md: 2rem;
@@ -264,13 +264,14 @@
     }
 
     .story__p {
-        font-family: var(--font-story); /* Nanum Myeongjo applied here */
-        font-size: 1.05rem;
-        line-height: 1.9;
+        font-family: var(--font-story);
+        font-size: 1.1rem;
+        line-height: 1.8;
         margin-bottom: 1.8rem;
-        opacity: 0.85;
+        opacity: 0.9;
         word-break: keep-all;
-        font-weight: 400;
+        font-weight: 700; /* Bolder for impact */
+        color: #1a1a1a;
     }
 
     .story__p:last-child {
@@ -278,12 +279,8 @@
     }
 
     .story__p em {
-        font-family: var(--font-serif);
-        font-style: italic;
-        color: var(--text-color);
-        opacity: 1;
-        font-size: 1.15rem;
-        border-bottom: 1px solid rgba(26, 26, 26, 0.2);
+        font-style: normal; /* Remove italics */
+        border-bottom: none; /* Remove underlines */
     }
 
     .story__image img {
