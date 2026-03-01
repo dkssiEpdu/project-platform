@@ -108,11 +108,15 @@
         justify-content: center;
         text-align: center;
         position: relative;
-        padding: var(--spacing-lg);
+        overflow: hidden;
+        color: white; /* Changed for dark background overlay */
     }
 
     .hero__content {
-        z-index: 2;
+        position: relative;
+        z-index: 10;
+        max-width: 800px;
+        padding: 0 20px;
     }
 
     .hero__title {
@@ -122,39 +126,67 @@
         margin-bottom: var(--spacing-md);
         font-weight: 300;
         font-style: italic;
+        text-shadow: 0 4px 30px rgba(0,0,0,0.3);
     }
 
     .hero__subtitle {
         font-size: 1rem;
         letter-spacing: 0.3rem;
         margin-bottom: var(--spacing-lg);
-        opacity: 0.8;
+        opacity: 0.9;
     }
 
     .btn {
         display: inline-block;
         padding: 1rem 3rem;
-        border: 1px solid var(--text-color);
+        border: 1px solid white;
         transition: var(--transition-base);
         font-size: 0.8rem;
         letter-spacing: 0.2rem;
-    }
-
-    .btn--primary:hover {
-        background-color: var(--text-color);
         color: white;
     }
 
-    .hero__background {
+    .btn--primary:hover {
+        background-color: white;
+        color: var(--text-color);
+    }
+
+    .hero__slider {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: url('https://images.unsplash.com/photo-1594125350489-7b92f483c48d?auto=format&fit=crop&q=80&w=2000');
+        z-index: 1;
+    }
+
+    .hero__slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         background-size: cover;
         background-position: center;
-        opacity: 0.15;
+        opacity: 0;
+        transition: opacity 2s ease-in-out, transform 8s linear;
+        transform: scale(1.1);
+    }
+
+    .hero__slide.active {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .hero::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 2;
     }
 
     /* Sections */

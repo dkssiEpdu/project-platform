@@ -34,7 +34,8 @@ SANTALYS is a luxury, sensory-focused perfume and diffuser brand. The website ai
 3. **Styling:** Apply modern CSS (Baseline) for layout and aesthetics, including the noise texture and container queries.
 4. **Interactivity:** Use `main.js` for scroll animations and Web Components for product elements.
 5. **3D Elements:** (Optional/Future) Integrate Three.js for a signature 3D perfume bottle.
-6. **Deployment:** Initialize Git (if not already) and push to the remote repository.
+6. **Deployment:** Successfully initialized Git and pushed to the remote repository (https://github.com/dkssiEpdu/project-fragrance.git).
 
 ---
 *Created on: 2026-03-01*
+*Last updated: 2026-03-01 - Pushed to GitHub*
