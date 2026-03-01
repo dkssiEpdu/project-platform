@@ -2,8 +2,9 @@
     --bg-color: #f7f7f5;
     --text-color: #1a1a1a;
     --accent-color: #3d3d3d;
-    --font-serif: 'Bodoni Moda', serif;
-    --font-sans: 'Montserrat', sans-serif;
+    --font-serif: 'Cormorant Garamond', serif;
+    --font-sans: 'Inter', sans-serif;
+    --font-story: 'Nanum Myeongjo', serif; /* Special font for brand story */
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;
     --spacing-md: 2rem;
@@ -24,7 +25,6 @@
         background-color: var(--bg-color);
         color: var(--text-color);
         line-height: 1.6;
-        letter-spacing: -0.01em;
         overflow-x: hidden;
         -webkit-font-smoothing: antialiased;
     }
@@ -80,10 +80,9 @@
 
     .nav__logo {
         font-family: var(--font-serif);
-        font-size: 2rem;
-        letter-spacing: 0.15rem;
-        font-weight: 600;
-        text-transform: uppercase;
+        font-size: 1.8rem;
+        letter-spacing: 0.2rem;
+        font-weight: 500;
     }
 
     .nav__toggle {
@@ -112,10 +111,9 @@
     }
 
     .nav__links a {
-        font-size: 0.75rem;
-        letter-spacing: 0.2rem;
-        font-weight: 500;
-        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.1rem;
+        font-weight: 400;
         transition: opacity 0.3s ease;
     }
 
@@ -139,39 +137,35 @@
     .hero__content {
         position: relative;
         z-index: 10;
-        max-width: 900px;
+        max-width: 800px;
         padding: 0 20px;
     }
 
     .hero__title {
         font-family: var(--font-serif);
-        font-size: clamp(3.5rem, 12vw, 9rem);
-        line-height: 0.85;
+        font-size: clamp(3rem, 10vw, 8rem);
+        line-height: 0.9;
         margin-bottom: var(--spacing-md);
-        font-weight: 400;
+        font-weight: 300;
         font-style: italic;
         text-shadow: 0 4px 30px rgba(0,0,0,0.3);
     }
 
     .hero__subtitle {
-        font-size: 0.9rem;
-        letter-spacing: 0.4rem;
+        font-size: 1rem;
+        letter-spacing: 0.3rem;
         margin-bottom: var(--spacing-lg);
-        text-transform: uppercase;
         opacity: 0.9;
-        font-weight: 300;
     }
 
     .btn {
         display: inline-block;
-        padding: 1.2rem 3.5rem;
+        padding: 1rem 3rem;
         border: 1px solid white;
         transition: var(--transition-base);
-        font-size: 0.75rem;
-        letter-spacing: 0.3rem;
+        font-size: 0.8rem;
+        letter-spacing: 0.2rem;
         color: white;
-        text-transform: uppercase;
-        font-weight: 500;
     }
 
     .btn--primary:hover {
@@ -232,16 +226,14 @@
 
     .section__title {
         font-family: var(--font-serif);
-        font-size: 4rem;
+        font-size: 3rem;
         margin-bottom: var(--spacing-sm);
         font-weight: 400;
-        font-style: italic;
     }
 
     .section__desc {
-        font-size: 0.8rem;
-        letter-spacing: 0.2rem;
-        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.1rem;
         opacity: 0.6;
     }
 
@@ -262,11 +254,9 @@
 
     .story__title {
         font-family: var(--font-serif);
-        font-size: 4.5rem;
+        font-size: 3.5rem;
         margin-bottom: var(--spacing-md);
         font-weight: 400;
-        font-style: italic;
-        line-height: 1;
     }
 
     .story__desc-container {
@@ -274,12 +264,13 @@
     }
 
     .story__p {
-        font-size: 1rem;
-        line-height: 2;
-        margin-bottom: 2rem;
-        opacity: 0.8;
+        font-family: var(--font-story); /* Nanum Myeongjo applied here */
+        font-size: 1.05rem;
+        line-height: 1.9;
+        margin-bottom: 1.8rem;
+        opacity: 0.85;
         word-break: keep-all;
-        font-weight: 300;
+        font-weight: 400;
     }
 
     .story__p:last-child {
@@ -291,14 +282,13 @@
         font-style: italic;
         color: var(--text-color);
         opacity: 1;
-        font-size: 1.2rem;
-        font-weight: 500;
+        font-size: 1.15rem;
         border-bottom: 1px solid rgba(26, 26, 26, 0.2);
     }
 
     .story__image img {
         width: 100%;
-        height: 700px;
+        height: 600px;
         object-fit: cover;
         box-shadow: 0 40px 100px rgba(0,0,0,0.1);
     }
@@ -312,17 +302,15 @@
 
     .footer__logo {
         font-family: var(--font-serif);
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         letter-spacing: 0.2rem;
         margin-bottom: var(--spacing-sm);
-        text-transform: uppercase;
     }
 
     .footer p {
-        font-size: 0.65rem;
-        letter-spacing: 0.15rem;
+        font-size: 0.7rem;
+        letter-spacing: 0.1rem;
         opacity: 0.5;
-        text-transform: uppercase;
     }
 }
 
@@ -333,7 +321,7 @@
     }
     
     .hero__title {
-        font-size: 4.5rem;
+        font-size: 4rem;
     }
 
     .header {
@@ -382,8 +370,7 @@
     }
 
     .nav__links a {
-        font-size: 1.5rem;
+        font-size: 2rem;
         font-family: var(--font-serif);
-        letter-spacing: 0.3rem;
     }
 }
