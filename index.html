@@ -1,14 +1,85 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
-  <link href='/style.css' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SANTALYS | Sensory Perfume & Diffuser</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script defer type="module" src="main.js"></script>
 </head>
 <body>
-  <h1>Hello, world!</h1>
-  <button onclick="console.log('hello');">Press me</button>
-  <script defer type="text/javascript" src="/main.js"></script>
+    <header class="header">
+        <nav class="nav">
+            <div class="nav__logo">SANTALYS</div>
+            <ul class="nav__links">
+                <li><a href="#perfume">PERFUME</a></li>
+                <li><a href="#diffuser">DIFFUSER</a></li>
+                <li><a href="#story">STORY</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero__content">
+                <h1 class="hero__title">The Art of <br>Scented Memory</h1>
+                <p class="hero__subtitle">감각의 본질을 깨우는 우디한 향기의 서사, 산탈리스</p>
+                <a href="#perfume" class="btn btn--primary">DISCOVER NOW</a>
+            </div>
+            <div class="hero__background"></div>
+        </section>
+
+        <section id="perfume" class="section section--products">
+            <div class="section__header">
+                <h2 class="section__title">Collection</h2>
+                <p class="section__desc">영감을 주는 향기의 컬렉션</p>
+            </div>
+            <div class="product-grid">
+                <!-- Web Component: <product-card> will be rendered here -->
+                <product-card 
+                    name="SANTAL 01" 
+                    price="₩138,000" 
+                    image="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&q=80&w=800"
+                    desc="깊은 숲의 고요함과 샌달우드의 잔향">
+                </product-card>
+                <product-card 
+                    name="FLOWERED DUSK" 
+                    price="₩125,000" 
+                    image="https://images.unsplash.com/photo-1592914610354-fd3596459ad0?auto=format&fit=crop&q=80&w=800"
+                    desc="해 질 녘 정원의 보랏빛 우아함">
+                </product-card>
+                <product-card 
+                    name="MORNING CLAY" 
+                    price="₩118,000" 
+                    image="https://images.unsplash.com/photo-1563170351-be82bc888aa4?auto=format&fit=crop&q=80&w=800"
+                    desc="이슬 머금은 흙과 아침의 청량함">
+                </product-card>
+            </div>
+        </section>
+
+        <section id="story" class="section section--story">
+            <div class="story-layout">
+                <div class="story__text">
+                    <h2 class="story__title">SANTALYS Philosophy</h2>
+                    <p class="story__desc">우리는 보이지 않는 향기를 통해 당신의 공간과 시간을 조각합니다. 인위적이지 않은 자연의 거친 결을 담아낸 산탈리스만의 감각적인 향조를 만나보세요.</p>
+                </div>
+                <div class="story__image">
+                    <img src="https://images.unsplash.com/photo-1605651862451-24795bb49021?auto=format&fit=crop&q=80&w=1200" alt="SANTALYS Brand Story">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer__content">
+            <div class="footer__logo">SANTALYS</div>
+            <p>&copy; 2026 SANTALYS. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div class="noise-overlay"></div>
 </body>
 </html>
