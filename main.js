@@ -1,3 +1,44 @@
+// Mobile Menu Logic
+function initMobileMenu() {
+    const toggle = document.querySelector('.nav__toggle');
+    const links = document.querySelector('.nav__links');
+    const navItems = document.querySelectorAll('.nav__links a');
+
+    if (!toggle || !links) return;
+
+    toggle.addEventListener('click', () => {
+        toggle.classList.toggle('active');
+        links.classList.toggle('active');
+        document.body.style.overflow = links.classList.contains('active') ? 'hidden' : 'auto';
+    });
+
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            toggle.classList.remove('active');
+            links.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+    });
+}
+
+// Hero Slider Logic
+function initHeroSlider() {
+    const slides = document.querySelectorAll('.hero__slide');
+    if (!slides.length) return;
+
+    let currentSlide = 0;
+    const slideInterval = 5000; // 5 seconds
+
+    function nextSlide() {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+    }
+
+    setInterval(nextSlide, slideInterval);
+}
+
+// Product Card Web Component
 class ProductCard extends HTMLElement {
     constructor() {
         super();
@@ -91,26 +132,10 @@ class ProductCard extends HTMLElement {
 
 customElements.define('product-card', ProductCard);
 
-// Hero Slider Logic
-function initHeroSlider() {
-    const slides = document.querySelectorAll('.hero__slide');
-    if (!slides.length) return;
-
-    let currentSlide = 0;
-    const slideInterval = 5000; // 5 seconds
-
-    function nextSlide() {
-        slides[currentSlide].classList.remove('active');
-        currentSlide = (currentSlide + 1) % slides.length;
-        slides[currentSlide].classList.add('active');
-    }
-
-    setInterval(nextSlide, slideInterval);
-}
-
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     initHeroSlider();
+    initMobileMenu();
     
     // Smooth scroll for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
