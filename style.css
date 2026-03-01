@@ -305,23 +305,26 @@
     .header {
         mix-blend-mode: normal;
         background: rgba(247, 247, 245, 0.9);
-        color: var(--text-color);
+        color: #000; /* Set header text color to black in mobile */
         padding: var(--spacing-sm) var(--spacing-md);
     }
 
     .nav__toggle {
         display: flex;
+        width: 24px; /* Reduced width */
+        height: 16px; /* Reduced height */
+        color: #000; /* Explicitly black */
     }
 
-    /* Mobile Menu Toggle Animation */
+    /* Mobile Menu Toggle Animation - Adjusted for new size */
     .nav__toggle.active .nav__toggle-line:nth-child(1) {
-        transform: translateY(9.5px) rotate(45deg);
+        transform: translateY(7px) rotate(45deg);
     }
     .nav__toggle.active .nav__toggle-line:nth-child(2) {
         opacity: 0;
     }
     .nav__toggle.active .nav__toggle-line:nth-child(3) {
-        transform: translateY(-9.5px) rotate(-45deg);
+        transform: translateY(-7px) rotate(-45deg);
     }
 
     .nav__links {
