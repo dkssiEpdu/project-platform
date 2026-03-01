@@ -109,7 +109,8 @@
         text-align: center;
         position: relative;
         overflow: hidden;
-        color: white; /* Changed for dark background overlay */
+        color: white;
+        background-color: #1a1a1a; /* Dark fallback to prevent gray flicker */
     }
 
     .hero__content {
@@ -176,6 +177,7 @@
     .hero__slide.active {
         opacity: 1;
         transform: scale(1);
+        transition: opacity 1.5s ease-in-out, transform 8s linear; /* Faster initial fade */
     }
 
     .hero::after {
