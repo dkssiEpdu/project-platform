@@ -1,143 +1,41 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SANTALYS | Sensory Perfume & Diffuser</title>
-    
-    <!-- SEO & Social Sharing (OG Tags) -->
-    <meta name="description" content="감각의 본질을 깨우는 우디한 향기의 서사, 산탈리스. 샌달우드의 깊은 잔향과 예술적인 퍼퓸 컬렉션을 만나보세요.">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="SANTALYS | 산탈리스">
-    <meta property="og:description" content="감각의 본질을 깨우는 우디한 향기의 서사. 당신의 깊은 내면과 교감하는 고요한 여정을 경험해 보세요.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?auto=format&fit=crop&q=80&w=1200">
-    <meta property="og:url" content="https://dkssiEpdu.github.io/project-fragrance/">
-    <meta name="twitter:card" content="summary_large_image">
-
+    <title>UniBridge | Community for International Students in Korea</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@300;400;500&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <script defer type="module" src="main.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <header class="header">
-        <nav class="nav">
-            <div class="nav__logo">SANTALYS</div>
-            <div class="nav__right">
-                <ul class="nav__links">
-                    <li><a href="#perfume">PERFUME</a></li>
-                    <li><a href="#story">STORY</a></li>
-                </ul>
-                <a href="#" class="nav__cart">
-                    CART <span class="cart-count">0</span>
-                </a>
-                <button class="nav__toggle" aria-label="Toggle Navigation">
-                    <span class="nav__toggle-line"></span>
-                    <span class="nav__toggle-line"></span>
-                    <span class="nav__toggle-line"></span>
-                </button>
+    <div id="app">
+        <header id="main-header">
+            <div class="header-content">
+                <h1 class="logo">UniBridge</h1>
+                <div id="user-status">
+                    <!-- Auth UI will be injected here -->
+                </div>
             </div>
+        </header>
+
+        <main id="main-content">
+            <div id="view-container">
+                <!-- SPA views will be injected here -->
+                <div class="loader-container">
+                    <div class="loader"></div>
+                </div>
+            </div>
+        </main>
+
+        <nav id="bottom-nav">
+            <!-- Navigation will be injected here -->
         </nav>
-    </header>
-
-    <main>
-        <section class="hero">
-            <div class="hero__content">
-                <h1 class="hero__title">The Art of <br>Scented Memory</h1>
-                <p class="hero__subtitle">감각의 본질을 깨우는 우디한 향기의 서사, 산탈리스</p>
-                <a href="#perfume" class="btn btn--primary">DISCOVER NOW</a>
-            </div>
-            <div class="hero__slider">
-                <div class="hero__slide active" style="background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=1600')"></div>
-                <div class="hero__slide" style="background-image: url('https://images.unsplash.com/photo-1508615070457-7baeba4003ab?auto=format&fit=crop&q=80&w=1600')"></div>
-                <div class="hero__slide" style="background-image: url('https://images.unsplash.com/photo-1590736704728-f4730bb3c3af?auto=format&fit=crop&q=80&w=1600')"></div>
-                <div class="hero__slide" style="background-image: url('https://images.unsplash.com/photo-1615484477778-ca3b77940c25?auto=format&fit=crop&q=80&w=1600')"></div>
-            </div>
-        </section>
-
-        <section id="perfume" class="section section--products">
-            <div class="section__header">
-                <h2 class="section__title">Collection</h2>
-                <p class="section__desc">영감을 주는 향기의 컬렉션</p>
-            </div>
-            <div class="product-grid">
-                <product-card 
-                    product-id="santal-01"
-                    name="SANTAL 01" 
-                    price="₩138,000" 
-                    image="https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?auto=format&fit=crop&q=80&w=800"
-                    desc="따스한 햇살이 머무는 숲, 샌달우드의 깊은 잔향">
-                </product-card>
-                <product-card 
-                    product-id="flowered-dusk"
-                    name="FLOWERED DUSK" 
-                    price="₩125,000" 
-                    image="https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=800"
-                    desc="정원의 푸르름과 야생화가 어우러진 우아함">
-                </product-card>
-                <product-card 
-                    product-id="morning-clay"
-                    name="MORNING CLAY" 
-                    price="₩118,000" 
-                    image="https://images.unsplash.com/photo-1585120040315-2241b774ad0f?auto=format&fit=crop&q=80&w=800"
-                    desc="이슬 머금은 대지와 아침 공기의 청량함">
-                </product-card>
-            </div>
-        </section>
-
-        <section id="story" class="section section--story">
-            <div class="story-layout">
-                <div class="story__text">
-                    <h2 class="story__title">SANTALYS Philosophy</h2>
-                    <div class="story__desc-container">
-                        <p class="story__p">향기는 단순한 후각적 자극을 넘어,<br>잊고 있던 기억의 가장 깊은 조각을 깨우는<br>가장 원초적인 통로입니다.</p>
-                        
-                        <p class="story__p">산탈리스(SANTALYS)는 인위적인 화려함을 걷어내고, 대지의 거친 결에서 영감을 얻어 한 병의 정교한 오브제에 담아냈습니다.</p>
-                        
-                        <p class="story__p">타인에게 보여주기 위한 향이 아닌, 오직 당신의 깊은 내면과 교감하며 본연의 무게감을 찾아가는 고요한 여정을 경험해 보세요. </p>
-                    </div>
-                </div>
-                <div class="story__image">
-                    <img src="https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&q=80&w=1200" alt="SANTALYS Brand Story">
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="footer">
-        <div class="footer__content">
-            <div class="footer__logo">SANTALYS</div>
-            <p>&copy; 2026 SANTALYS. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <!-- Product Detail Overlay -->
-    <div class="detail-overlay">
-        <div class="detail-container">
-            <!-- Dynamic Content -->
-        </div>
     </div>
 
-    <!-- Shopping Cart Drawer -->
-    <div class="cart-overlay"></div>
-    <div class="cart-drawer">
-        <div class="cart-header">
-            <h2>Your Cart</h2>
-            <button class="cart-close">&times;</button>
-        </div>
-        <div class="cart-items">
-            <!-- Dynamic Content -->
-        </div>
-        <div class="cart-footer">
-            <div class="cart-total">
-                <span>Total</span>
-                <span class="cart-total-value">₩0</span>
-            </div>
-            <button class="btn btn--secondary" onclick="alert('결제 기능은 데모 버전에서 지원되지 않습니다.');">CHECKOUT</button>
-        </div>
-    </div>
-
-    <div class="noise-overlay"></div>
+    <!-- Firebase SDKs -->
+    <script type="module" src="main.js"></script>
 </body>
 </html>
