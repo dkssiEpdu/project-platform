@@ -22,7 +22,7 @@ const db = getFirestore(app);
 const state = {
     user: null,
     currentView: 'home',
-    currentLanguage: 'en',
+    currentLanguage: 'ko',
     boards: ['General', 'Visa', 'Jobs', 'Housing', 'Marketplace']
 };
 
@@ -107,7 +107,10 @@ class UbLangMenu extends HTMLElement {
 
         this.innerHTML = `
             <div class="lang-dropdown">
-                <button class="lang-btn" aria-label="Select Language"><i class="fas fa-globe"></i></button>
+                <button class="lang-btn" aria-label="Select Language">
+                    <i class="fas fa-globe"></i>
+                    <span style="margin-left: 8px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase;">${state.currentLanguage}</span>
+                </button>
                 <div class="lang-content">
                     ${langs.map(l => `
                         <div class="lang-option ${state.currentLanguage === l.code ? 'active' : ''}" data-lang="${l.code}">
