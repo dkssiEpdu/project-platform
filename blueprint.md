@@ -17,7 +17,7 @@ UniBridge is a high-performance community platform designed for international st
 3. **Multi-language Support:** Globalized UI supporting English (EN), Korean (KO), Russian (RU), Chinese (ZH), and Japanese (JA).
 4. **Interactive Posts:** Users can create posts, comment, and like content.
 5. **User Actions Menu:** A dedicated menu next to the language selector for quick access to "Create Post" and other user-centric features.
-6. **Automatic Post Translation:** AI-powered real-time translation for all user posts to the selected language.
+6. **Automatic Post Translation (v1.4):** AI-powered real-time translation for all user posts. Supports automatic source language detection and provides a toggle to switch between original and translated versions.
 7. **Smart Search:** Quickly find information across all boards.
 8. **Profile Management:** Custom profiles and post history.
 
@@ -31,5 +31,6 @@ UniBridge is a high-performance community platform designed for international st
 7. **Multi-Language Support (v1.1):** Expanded support to 5 languages (EN, KO, RU, ZH, JA) and refined the selection UI with modern animations.
 8. **AI Translation (v1.2):** Integrated MyMemory API for automatic, real-time translation of user-generated content with client-side caching.
 9. **User Actions Menu (v1.3):** Refined the header layout to include a dedicated "User Menu" next to the language selector, consolidating "Create Post" and other shortcuts.
+10. **Enhanced AI Translation (v1.4):** Upgraded the translation system to support multi-directional translation with automatic source language detection (using MyMemory `auto|target` pair). Added a "Show Original" toggle to `UbPostCard` for better user control and transparency.
 
 

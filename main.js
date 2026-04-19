@@ -50,7 +50,9 @@ const translations = {
         postContent: '내용을 입력하세요...',
         postButton: '등록하기',
         selectCategory: '카테고리 선택',
-        menu: '메뉴'
+        menu: '메뉴',
+        showOriginal: '원문 보기',
+        showTranslated: '번역본 보기'
     },
     en: {
         explore: 'Explore Community',
@@ -68,7 +70,9 @@ const translations = {
         postContent: 'Write your content here...',
         postButton: 'Post',
         selectCategory: 'Select Category',
-        menu: 'Menu'
+        menu: 'Menu',
+        showOriginal: 'Show Original',
+        showTranslated: 'Show Translated'
     },
     ru: {
         explore: 'Исследовать сообщество',
@@ -86,7 +90,9 @@ const translations = {
         postContent: 'Напишите здесь свой контент...',
         postButton: 'Опубликовать',
         selectCategory: 'Выберите категорию',
-        menu: 'Меню'
+        menu: 'Меню',
+        showOriginal: 'Показать оригинал',
+        showTranslated: 'Показать перевод'
     },
     zh: {
         explore: '探索社区',
@@ -104,7 +110,9 @@ const translations = {
         postContent: '在这里写下你的内容...',
         postButton: '发布',
         selectCategory: '选择分类',
-        menu: '菜单'
+        menu: '菜单',
+        showOriginal: '显示原文',
+        showTranslated: '显示翻译'
     },
     ja: {
         explore: 'コミュニティを探索',
@@ -122,7 +130,9 @@ const translations = {
         postContent: 'ここに内容を書いてください...',
         postButton: '投稿する',
         selectCategory: 'カテゴリーを選択',
-        menu: 'メニュー'
+        menu: 'メニュー',
+        showOriginal: '原文を見る',
+        showTranslated: '翻訳を見る'
     }
 };
 
@@ -131,13 +141,13 @@ function t(key) {
 }
 
 async function translateText(text, targetLang) {
-    if (!text || targetLang === 'en') return text; // Assuming source is English for now
+    if (!text) return text;
     
     const cacheKey = `${text}_${targetLang}`;
     if (state.translationCache[cacheKey]) return state.translationCache[cacheKey];
 
     try {
-        const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`);
+        const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=auto|${targetLang}`);
         const data = await response.json();
         const translated = data.responseData.translatedText;
         state.translationCache[cacheKey] = translated;
@@ -266,14 +276,17 @@ customElements.define('ub-nav', UbNav);
 class UbPostCard extends HTMLElement {
     set post(data) {
         this._data = data;
+        this._showingOriginal = false;
         this.render();
         this.autoTranslate();
     }
 
     render(isTranslated = false) {
         const d = this._data;
-        const title = isTranslated ? this._translatedTitle : d.title;
-        const content = isTranslated ? this._translatedContent : d.content;
+        const useTranslated = isTranslated && !this._showingOriginal && this._translatedTitle;
+        const title = useTranslated ? this._translatedTitle : d.title;
+        const content = useTranslated ? this._translatedContent : d.content;
+        const hasTranslation = !!this._translatedTitle;
 
         this.innerHTML = `
             <div class="card fade-in">
@@ -283,7 +296,14 @@ class UbPostCard extends HTMLElement {
                         <div style="font-weight: 700; font-size: 0.9rem;">${d.author || 'Anonymous'}</div>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">${d.time || 'Just now'}</div>
                     </div>
-                    ${isTranslated ? `<span class="translate-badge"><i class="fas fa-magic"></i> ${t('translated')}</span>` : ''}
+                    ${hasTranslation ? `
+                        <div class="translation-controls" style="display: flex; align-items: center; gap: 8px;">
+                            <span class="translate-badge"><i class="fas fa-magic"></i> ${t('translated')}</span>
+                            <button class="toggle-translate" style="background: none; border: none; font-size: 0.75rem; color: var(--primary); cursor: pointer; text-decoration: underline; font-weight: 600; padding: 0;">
+                                ${this._showingOriginal ? t('showTranslated') : t('showOriginal')}
+                            </button>
+                        </div>
+                    ` : ''}
                 </div>
                 <h3 style="margin-bottom: 8px; font-size: 1.1rem;">${title}</h3>
                 <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px;">${content}</p>
@@ -293,19 +313,33 @@ class UbPostCard extends HTMLElement {
                 </div>
             </div>
         `;
+
+        if (hasTranslation) {
+            const btn = this.querySelector('.toggle-translate');
+            if (btn) {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this._showingOriginal = !this._showingOriginal;
+                    this.render(true);
+                });
+            }
+        }
     }
 
     async autoTranslate() {
-        if (state.currentLanguage === 'en') return;
-
         const [tTitle, tContent] = await Promise.all([
             translateText(this._data.title, state.currentLanguage),
             translateText(this._data.content, state.currentLanguage)
         ]);
 
-        this._translatedTitle = tTitle;
-        this._translatedContent = tContent;
-        this.render(true);
+        if (tTitle && tContent && (
+            tTitle.toLowerCase().trim() !== this._data.title.toLowerCase().trim() || 
+            tContent.toLowerCase().trim() !== this._data.content.toLowerCase().trim()
+        )) {
+            this._translatedTitle = tTitle;
+            this._translatedContent = tContent;
+            this.render(true);
+        }
     }
 }
 customElements.define('ub-post-card', UbPostCard);
