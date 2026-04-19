@@ -23,7 +23,8 @@ const state = {
     user: null,
     currentView: 'home',
     currentLanguage: 'ko',
-    boards: ['General', 'Visa', 'Jobs', 'Housing', 'Marketplace']
+    boards: ['General', 'Visa', 'Jobs', 'Housing', 'Marketplace'],
+    translationCache: {}
 };
 
 // --- Translation System ---
@@ -37,7 +38,8 @@ const translations = {
         signIn: '로그인',
         signInMsg: '커뮤니티에 참여하려면 로그인해 주세요.',
         comingSoon: '준비 중입니다...',
-        viewLatest: '최신 글 보기'
+        viewLatest: '최신 글 보기',
+        translated: 'AI 자동 번역'
     },
     en: {
         explore: 'Explore Community',
@@ -48,7 +50,8 @@ const translations = {
         signIn: 'Sign In',
         signInMsg: 'Please sign in to join the community.',
         comingSoon: 'Coming soon...',
-        viewLatest: 'View the latest from'
+        viewLatest: 'View the latest from',
+        translated: 'Translated by AI'
     },
     ru: {
         explore: 'Исследовать сообщество',
@@ -59,7 +62,8 @@ const translations = {
         signIn: 'Войти',
         signInMsg: 'Пожалуйста, войдите, чтобы присоединиться к сообществу.',
         comingSoon: 'Скоро будет...',
-        viewLatest: 'Посмотреть последние из'
+        viewLatest: 'Посмотреть последние из',
+        translated: 'Автоматический перевод'
     },
     zh: {
         explore: '探索社区',
@@ -70,7 +74,8 @@ const translations = {
         signIn: '登录',
         signInMsg: '请登录以加入社区。',
         comingSoon: '即将推出...',
-        viewLatest: '查看最新动态'
+        viewLatest: '查看最新动态',
+        translated: 'AI 自动翻译'
     },
     ja: {
         explore: 'コミュニティを探索',
@@ -78,15 +83,34 @@ const translations = {
         market: 'マーケット',
         profile: 'プロフィール',
         welcome: 'UniBridgeへようこそ',
-        signIn: 'サインイン',
+        signIn: 'サイン인',
         signInMsg: 'コミュニティに参加するにはサインインしてください。',
         comingSoon: '近日公開...',
-        viewLatest: '最新の投稿を見る'
+        viewLatest: '最新の投稿を見る',
+        translated: 'AI自動翻訳'
     }
 };
 
 function t(key) {
     return translations[state.currentLanguage][key] || key;
+}
+
+async function translateText(text, targetLang) {
+    if (!text || targetLang === 'en') return text; // Assuming source is English for now
+    
+    const cacheKey = `${text}_${targetLang}`;
+    if (state.translationCache[cacheKey]) return state.translationCache[cacheKey];
+
+    try {
+        const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`);
+        const data = await response.json();
+        const translated = data.responseData.translatedText;
+        state.translationCache[cacheKey] = translated;
+        return translated;
+    } catch (error) {
+        console.error('Translation error:', error);
+        return text;
+    }
 }
 
 // --- Web Components ---
@@ -167,23 +191,47 @@ customElements.define('ub-nav', UbNav);
 
 class UbPostCard extends HTMLElement {
     set post(data) {
+        this._data = data;
+        this.render();
+        this.autoTranslate();
+    }
+
+    render(isTranslated = false) {
+        const d = this._data;
+        const title = isTranslated ? this._translatedTitle : d.title;
+        const content = isTranslated ? this._translatedContent : d.content;
+
         this.innerHTML = `
             <div class="card fade-in">
                 <div class="card-header" style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                     <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light);"></div>
-                    <div>
-                        <div style="font-weight: 700; font-size: 0.9rem;">${data.author || 'Anonymous'}</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">${data.time || 'Just now'}</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 700; font-size: 0.9rem;">${d.author || 'Anonymous'}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${d.time || 'Just now'}</div>
                     </div>
+                    ${isTranslated ? `<span class="translate-badge"><i class="fas fa-magic"></i> ${t('translated')}</span>` : ''}
                 </div>
-                <h3 style="margin-bottom: 8px; font-size: 1.1rem;">${data.title}</h3>
-                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px;">${data.content}</p>
+                <h3 style="margin-bottom: 8px; font-size: 1.1rem;">${title}</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px;">${content}</p>
                 <div style="display: flex; gap: 16px; font-size: 0.85rem; color: var(--text-muted);">
-                    <span><i class="far fa-heart"></i> ${data.likes || 0}</span>
-                    <span><i class="far fa-comment"></i> ${data.comments || 0}</span>
+                    <span><i class="far fa-heart"></i> ${d.likes || 0}</span>
+                    <span><i class="far fa-comment"></i> ${d.comments || 0}</span>
                 </div>
             </div>
         `;
+    }
+
+    async autoTranslate() {
+        if (state.currentLanguage === 'en') return;
+
+        const [tTitle, tContent] = await Promise.all([
+            translateText(this._data.title, state.currentLanguage),
+            translateText(this._data.content, state.currentLanguage)
+        ]);
+
+        this._translatedTitle = tTitle;
+        this._translatedContent = tContent;
+        this.render(true);
     }
 }
 customElements.define('ub-post-card', UbPostCard);

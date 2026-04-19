@@ -16,17 +16,18 @@ UniBridge is a high-performance community platform designed for international st
 2. **Community Boards:** Real-time feeds for various categories (General, Visa, Jobs, Housing, Marketplace).
 3. **Multi-language Support:** Globalized UI supporting English (EN), Korean (KO), Russian (RU), Chinese (ZH), and Japanese (JA).
 4. **Interactive Posts:** Users can create posts, comment, and like content.
-5. **Smart Search:** Quickly find information across all boards.
-6. **Profile Management:** Custom profiles and post history.
+5. **Automatic Post Translation:** AI-powered real-time translation for all user posts to the selected language.
+6. **Smart Search:** Quickly find information across all boards.
+7. **Profile Management:** Custom profiles and post history.
 
 ## Technical Implementation (History & Progress)
 1. **Foundation:** Clean slate with modern CSS Reset and global variables.
 2. **UI Update:** Transitioned to a clean white background with a bright lime green logo and vibrant accents.
 3. **i18n:** Implemented a lightweight translation dictionary and language switcher in the header.
 4. **Components:** Custom elements for `ub-nav`, `ub-post`, `ub-auth`, etc.
-
-
 5. **Services:** Firebase integration for real-time data and authentication.
 6. **Router:** Custom hash-based routing for seamless view transitions.
 7. **Multi-Language Support (v1.1):** Expanded support to 5 languages (EN, KO, RU, ZH, JA) and refined the selection UI with modern animations.
+8. **AI Translation (v1.2):** Integrated MyMemory API for automatic, real-time translation of user-generated content with client-side caching.
+
 

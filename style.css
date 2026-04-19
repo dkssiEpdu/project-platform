@@ -173,6 +173,24 @@ body::before {
     background-color: oklch(98% 0.05 145);
 }
 
+.translate-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--primary-light);
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 .logo {
     font-size: 1.5rem;
     font-weight: 800;
