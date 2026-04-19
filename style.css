@@ -91,7 +91,7 @@ body::before {
     gap: 16px;
 }
 
-/* Language Dropdown */
+/* Language & User Dropdown */
 .lang-dropdown {
     position: relative;
     display: inline-block;
@@ -111,7 +111,7 @@ body::before {
     justify-content: center;
 }
 
-.lang-btn:hover {
+.lang-btn:hover, .lang-btn.active {
     background: var(--primary-light);
     color: var(--primary);
     box-shadow: 0 0 15px var(--primary-light);
@@ -123,7 +123,7 @@ body::before {
     right: 0;
     top: calc(100% + 8px);
     background-color: var(--bg-card);
-    min-width: 140px;
+    min-width: 180px;
     box-shadow: var(--deep-shadow);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-md);

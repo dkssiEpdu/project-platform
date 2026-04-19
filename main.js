@@ -24,7 +24,12 @@ const state = {
     currentView: 'home',
     currentLanguage: 'ko',
     boards: ['General', 'Visa', 'Jobs', 'Housing', 'Marketplace'],
-    translationCache: {}
+    translationCache: {},
+    posts: [
+        { title: 'Best Korean Language Schools in Seoul?', content: 'I am planning to study Korean this summer. Any recommendations?', author: 'Kim_Study', likes: 12, comments: 5, category: 'General' },
+        { title: 'D-2 Visa Extension Experience', content: 'Just finished my extension at the immigration office. Here are some tips...', author: 'GlobalStudent', likes: 45, comments: 22, category: 'Visa' },
+        { title: 'Subletting my room in Hongdae', content: 'Available from June to August. Close to the station!', author: 'Traveler_KR', likes: 8, comments: 3, category: 'Housing' }
+    ]
 };
 
 // --- Translation System ---
@@ -39,7 +44,13 @@ const translations = {
         signInMsg: '커뮤니티에 참여하려면 로그인해 주세요.',
         comingSoon: '준비 중입니다...',
         viewLatest: '최신 글 보기',
-        translated: 'AI 자동 번역'
+        translated: 'AI 자동 번역',
+        createPost: '글쓰기',
+        postTitle: '제목',
+        postContent: '내용을 입력하세요...',
+        postButton: '등록하기',
+        selectCategory: '카테고리 선택',
+        menu: '메뉴'
     },
     en: {
         explore: 'Explore Community',
@@ -51,7 +62,13 @@ const translations = {
         signInMsg: 'Please sign in to join the community.',
         comingSoon: 'Coming soon...',
         viewLatest: 'View the latest from',
-        translated: 'Translated by AI'
+        translated: 'Translated by AI',
+        createPost: 'Write',
+        postTitle: 'Title',
+        postContent: 'Write your content here...',
+        postButton: 'Post',
+        selectCategory: 'Select Category',
+        menu: 'Menu'
     },
     ru: {
         explore: 'Исследовать сообщество',
@@ -60,10 +77,16 @@ const translations = {
         profile: 'Профиль',
         welcome: 'Добро пожаловать в UniBridge',
         signIn: 'Войти',
-        signInMsg: 'Пожалуйста, войдите, чтобы присоединиться к сообществу.',
+        signInMsg: 'Пожалуйста, войти, чтобы присоединиться к сообществу.',
         comingSoon: 'Скоро будет...',
         viewLatest: 'Посмотреть последние из',
-        translated: 'Автоматический перевод'
+        translated: 'Автоматический перевод',
+        createPost: 'Написать',
+        postTitle: 'Заголовок',
+        postContent: 'Напишите здесь свой контент...',
+        postButton: 'Опубликовать',
+        selectCategory: 'Выберите категорию',
+        menu: 'Меню'
     },
     zh: {
         explore: '探索社区',
@@ -75,7 +98,13 @@ const translations = {
         signInMsg: '请登录以加入社区。',
         comingSoon: '即将推出...',
         viewLatest: '查看最新动态',
-        translated: 'AI 自动翻译'
+        translated: 'AI 自动翻译',
+        createPost: '发布',
+        postTitle: '标题',
+        postContent: '在这里写下你的内容...',
+        postButton: '发布',
+        selectCategory: '选择分类',
+        menu: '菜单'
     },
     ja: {
         explore: 'コミュニティを探索',
@@ -87,7 +116,13 @@ const translations = {
         signInMsg: 'コミュニティに参加するにはサインインしてください。',
         comingSoon: '近日公開...',
         viewLatest: '最新の投稿を見る',
-        translated: 'AI自動翻訳'
+        translated: 'AI自動翻訳',
+        createPost: '投稿',
+        postTitle: 'タイトル',
+        postContent: 'ここに内容を書いてください...',
+        postButton: '投稿する',
+        selectCategory: 'カテゴリーを選択',
+        menu: 'メニュー'
     }
 };
 
@@ -154,12 +189,51 @@ class UbLangMenu extends HTMLElement {
             el.addEventListener('click', () => {
                 state.currentLanguage = el.dataset.lang;
                 router.navigate(state.currentView);
-                renderLangMenu();
             });
         });
     }
 }
 customElements.define('ub-lang-menu', UbLangMenu);
+
+class UbUserMenu extends HTMLElement {
+    connectedCallback() {
+        this.render();
+    }
+
+    render() {
+        this.innerHTML = `
+            <div class="lang-dropdown">
+                <button class="lang-btn user-menu-btn" aria-label="User Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="lang-content user-menu-content">
+                    <div class="lang-option" data-action="write">
+                        <i class="fas fa-pen-nib" style="margin-right: 10px; width: 16px;"></i> ${t('createPost')}
+                    </div>
+                    <div class="lang-option" data-action="profile">
+                        <i class="fas fa-user-circle" style="margin-right: 10px; width: 16px;"></i> ${t('profile')}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        this.querySelector('.user-menu-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.querySelector('.user-menu-content').classList.toggle('show');
+            // Close language menu if open
+            const langContent = document.querySelector('.lang-content:not(.user-menu-content)');
+            if (langContent) langContent.classList.remove('show');
+        });
+
+        this.querySelectorAll('.lang-option').forEach(el => {
+            el.addEventListener('click', () => {
+                const action = el.dataset.action;
+                router.navigate(action);
+            });
+        });
+    }
+}
+customElements.define('ub-user-menu', UbUserMenu);
 
 class UbNav extends HTMLElement {
     connectedCallback() {
@@ -247,19 +321,62 @@ const router = {
                 <div id="posts-feed"></div>
             `;
             
-            // Mock posts for now
-            const mockPosts = [
-                { title: 'Best Korean Language Schools in Seoul?', content: 'I am planning to study Korean this summer. Any recommendations?', author: 'Kim_Study', likes: 12, comments: 5 },
-                { title: 'D-2 Visa Extension Experience', content: 'Just finished my extension at the immigration office. Here are some tips...', author: 'GlobalStudent', likes: 45, comments: 22 },
-                { title: 'Subletting my room in Hongdae', content: 'Available from June to August. Close to the station!', author: 'Traveler_KR', likes: 8, comments: 3 }
-            ];
-
             const feed = document.getElementById('posts-feed');
-            mockPosts.forEach(data => {
+            state.posts.forEach(data => {
                 const postEl = document.createElement('ub-post-card');
                 postEl.post = data;
                 feed.appendChild(postEl);
             });
+        },
+        write: () => {
+            const container = document.getElementById('view-container');
+            container.innerHTML = `
+                <div class="card fade-in" style="max-width: 600px; margin: 0 auto; padding: var(--spacing-lg);">
+                    <h2 style="margin-bottom: 24px;">${t('createPost')}</h2>
+                    <div style="display: grid; gap: 20px;">
+                        <div>
+                            <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px;">${t('postTitle')}</label>
+                            <input type="text" id="post-title" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--bg-main); font-family: inherit;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px;">${t('selectCategory')}</label>
+                            <select id="post-category" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--bg-main); font-family: inherit;">
+                                ${state.boards.map(b => `<option value="${b}">${b}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px;">${t('postContent')}</label>
+                            <textarea id="post-content" rows="8" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--bg-main); font-family: inherit; resize: none;"></textarea>
+                        </div>
+                        <div style="display: flex; gap: 12px; margin-top: 10px;">
+                            <button id="submit-post" style="flex: 1; padding: 14px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 700; cursor: pointer;">${t('postButton')}</button>
+                            <button id="cancel-post" style="padding: 14px 24px; border-radius: 12px; border: 1px solid var(--glass-border); background: none; font-weight: 700; cursor: pointer;">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('submit-post').addEventListener('click', () => {
+                const title = document.getElementById('post-title').value;
+                const category = document.getElementById('post-category').value;
+                const content = document.getElementById('post-content').value;
+
+                if (title && content) {
+                    const newPost = {
+                        title,
+                        content,
+                        category,
+                        author: state.user ? state.user.displayName || 'Me' : 'Me',
+                        time: 'Just now',
+                        likes: 0,
+                        comments: 0
+                    };
+                    state.posts.unshift(newPost);
+                    router.navigate('home');
+                }
+            });
+
+            document.getElementById('cancel-post').addEventListener('click', () => router.navigate('home'));
         },
         boards: () => {
             document.getElementById('view-container').innerHTML = `
@@ -293,6 +410,7 @@ const router = {
         state.currentView = view;
         router.views[view]();
         updateNav();
+        renderHeader();
     }
 };
 
@@ -301,21 +419,30 @@ function updateNav() {
     nav.innerHTML = '<ub-nav></ub-nav>';
 }
 
-function renderLangMenu() {
+function renderHeader() {
+    // Render Header Actions
+    const nav = document.getElementById('header-nav');
+    if (nav) {
+        // We now use the user menu instead of a standalone write button
+        nav.innerHTML = '<ub-user-menu></ub-user-menu>';
+    }
+
+    // Render Language Menu
     const menu = document.getElementById('lang-menu');
-    menu.innerHTML = '<ub-lang-menu></ub-lang-menu>';
+    if (menu) {
+        menu.innerHTML = '<ub-lang-menu></ub-lang-menu>';
+    }
 }
 
 // --- Initialization ---
 
 document.addEventListener('DOMContentLoaded', () => {
     router.navigate('home');
-    renderLangMenu();
+    renderHeader();
 
     // Close dropdowns on outside click
     document.addEventListener('click', () => {
-        const content = document.querySelector('.lang-content');
-        if (content) content.classList.remove('show');
+        document.querySelectorAll('.lang-content').forEach(el => el.classList.remove('show'));
     });
 });
 
