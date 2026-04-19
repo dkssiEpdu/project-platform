@@ -1,21 +1,21 @@
 :root {
-    /* Color Palette - Vibrant OKLCH */
-    --primary: oklch(65% 0.2 260); /* Vibrant Blue */
-    --primary-light: oklch(75% 0.15 260);
-    --secondary: oklch(70% 0.2 330); /* Vibrant Coral/Pink */
-    --accent: oklch(85% 0.15 150); /* Mint */
+    /* Color Palette - Bright & Vibrant OKLCH */
+    --primary: oklch(85% 0.25 145); /* Bright Lime Green */
+    --primary-light: oklch(90% 0.15 145);
+    --secondary: oklch(80% 0.15 230); /* Vibrant Blue */
+    --accent: oklch(85% 0.1 200); /* Cyan */
     
-    --bg-main: oklch(98% 0.01 260);
-    --bg-card: rgba(255, 255, 255, 0.7);
-    --text-main: oklch(25% 0.02 260);
-    --text-muted: oklch(50% 0.02 260);
+    --bg-main: oklch(100% 0 0); /* Pure White */
+    --bg-card: #ffffff;
+    --text-main: oklch(20% 0.02 145);
+    --text-muted: oklch(50% 0.02 145);
     
     /* Effects */
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.3);
-    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-    --soft-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    --deep-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.15);
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(0, 0, 0, 0.05);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+    --soft-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    --deep-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.12);
     
     /* Spacing & Borders */
     --radius-lg: 24px;
@@ -88,9 +88,7 @@ body::before {
 .logo {
     font-size: 1.5rem;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--primary);
     letter-spacing: -1px;
 }
 
@@ -139,7 +137,7 @@ body::before {
 
 .nav-item.active {
     color: var(--primary);
-    background: oklch(95% 0.05 260);
+    background: oklch(98% 0.05 145);
     transform: scale(1.1);
 }
 
