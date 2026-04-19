@@ -22,10 +22,118 @@ const db = getFirestore(app);
 const state = {
     user: null,
     currentView: 'home',
+    currentLanguage: 'en',
     boards: ['General', 'Visa', 'Jobs', 'Housing', 'Marketplace']
 };
 
+// --- Translation System ---
+const translations = {
+    ko: {
+        explore: '커뮤니티 탐색',
+        boards: '게시판',
+        market: '장터',
+        profile: '프로필',
+        welcome: 'UniBridge에 오신 것을 환영합니다',
+        signIn: '로그인',
+        signInMsg: '커뮤니티에 참여하려면 로그인해 주세요.',
+        comingSoon: '준비 중입니다...',
+        viewLatest: '최신 글 보기'
+    },
+    en: {
+        explore: 'Explore Community',
+        boards: 'Boards',
+        market: 'Marketplace',
+        profile: 'Profile',
+        welcome: 'Welcome to UniBridge',
+        signIn: 'Sign In',
+        signInMsg: 'Please sign in to join the community.',
+        comingSoon: 'Coming soon...',
+        viewLatest: 'View the latest from'
+    },
+    ja: {
+        explore: 'コミュニティを探索',
+        boards: '掲示板',
+        market: 'マーケット',
+        profile: 'プロフィール',
+        welcome: 'UniBridgeへようこそ',
+        signIn: 'サインイン',
+        signInMsg: 'コミュニティに参加するにはサインインしてください。',
+        comingSoon: '近日公開...',
+        viewLatest: '最新の投稿を見る'
+    },
+    ar: {
+        explore: 'استكشف المجتمع',
+        boards: 'المنتديات',
+        market: 'السوق',
+        profile: 'الملف الشخصي',
+        welcome: 'مرحباً بكم في UniBridge',
+        signIn: 'تسجيل الدخول',
+        signInMsg: 'يرجى تسجيل الدخول للانضمام إلى المجتمع.',
+        comingSoon: 'قريباً...',
+        viewLatest: 'عرض أحدث من'
+    },
+    fr: {
+        explore: 'Explorer la communauté',
+        boards: 'Tableaux',
+        market: 'Marché',
+        profile: 'Profil',
+        welcome: 'Bienvenue sur UniBridge',
+        signIn: 'Se connecter',
+        signInMsg: 'Veuillez vous connecter pour rejoindre la communauté.',
+        comingSoon: 'Bientôt disponible...',
+        viewLatest: 'Voir les dernières nouveautés de'
+    }
+};
+
+function t(key) {
+    return translations[state.currentLanguage][key] || key;
+}
+
 // --- Web Components ---
+
+class UbLangMenu extends HTMLElement {
+    connectedCallback() {
+        this.render();
+    }
+
+    render() {
+        const langs = [
+            { code: 'ko', name: '한국어' },
+            { code: 'en', name: 'English' },
+            { code: 'ja', name: '日本語' },
+            { code: 'ar', name: 'العربية' },
+            { code: 'fr', name: 'Français' }
+        ];
+
+        this.innerHTML = `
+            <div class="lang-dropdown">
+                <button class="lang-btn"><i class="fas fa-globe"></i></button>
+                <div class="lang-content">
+                    ${langs.map(l => `
+                        <div class="lang-option ${state.currentLanguage === l.code ? 'active' : ''}" data-lang="${l.code}">
+                            ${l.name}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+
+        this.querySelector('.lang-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.querySelector('.lang-content').classList.toggle('show');
+        });
+
+        this.querySelectorAll('.lang-option').forEach(el => {
+            el.addEventListener('click', () => {
+                state.currentLanguage = el.dataset.lang;
+                document.body.className = state.currentLanguage === 'ar' ? 'rtl' : '';
+                router.navigate(state.currentView);
+                renderLangMenu();
+            });
+        });
+    }
+}
+customElements.define('ub-lang-menu', UbLangMenu);
 
 class UbNav extends HTMLElement {
     connectedCallback() {
@@ -85,7 +193,7 @@ const router = {
         home: async () => {
             const container = document.getElementById('view-container');
             container.innerHTML = `
-                <h2 style="margin-bottom: 20px; font-weight: 800; font-size: 1.8rem;">Explore Community</h2>
+                <h2 style="margin-bottom: 20px; font-weight: 800; font-size: 1.8rem;">${t('explore')}</h2>
                 <div id="posts-feed"></div>
             `;
             
@@ -105,27 +213,27 @@ const router = {
         },
         boards: () => {
             document.getElementById('view-container').innerHTML = `
-                <h2 style="margin-bottom: 20px;">Boards</h2>
+                <h2 style="margin-bottom: 20px;">${t('boards')}</h2>
                 <div style="display: grid; gap: 12px;">
                     ${state.boards.map(b => `
                         <div class="card" style="cursor: pointer;">
-                            <h3 style="font-size: 1.1rem;">${b} Board</h3>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);">View the latest from ${b}</p>
+                            <h3 style="font-size: 1.1rem;">${b} ${t('boards')}</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">${t('viewLatest')} ${b}</p>
                         </div>
                     `).join('')}
                 </div>
             `;
         },
         market: () => {
-            document.getElementById('view-container').innerHTML = `<h2>Marketplace</h2><p>Coming soon...</p>`;
+            document.getElementById('view-container').innerHTML = `<h2>${t('market')}</h2><p>${t('comingSoon')}</p>`;
         },
         profile: () => {
             document.getElementById('view-container').innerHTML = `
                 <div class="card" style="text-align: center; padding: 40px 20px;">
                     <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--primary); margin: 0 auto 16px;"></div>
-                    <h2>Welcome to UniBridge</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 24px;">Please sign in to join the community.</p>
-                    <button style="padding: 12px 32px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 700;">Sign In</button>
+                    <h2>${t('welcome')}</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 24px;">${t('signInMsg')}</p>
+                    <button style="padding: 12px 32px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 700;">${t('signIn')}</button>
                 </div>
             `;
         }
@@ -143,10 +251,22 @@ function updateNav() {
     nav.innerHTML = '<ub-nav></ub-nav>';
 }
 
+function renderLangMenu() {
+    const menu = document.getElementById('lang-menu');
+    menu.innerHTML = '<ub-lang-menu></ub-lang-menu>';
+}
+
 // --- Initialization ---
 
 document.addEventListener('DOMContentLoaded', () => {
     router.navigate('home');
+    renderLangMenu();
+
+    // Close dropdowns on outside click
+    document.addEventListener('click', () => {
+        const content = document.querySelector('.lang-content');
+        if (content) content.classList.remove('show');
+    });
 });
 
 onAuthStateChanged(auth, (user) => {
