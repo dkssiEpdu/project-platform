@@ -50,6 +50,28 @@ const translations = {
         comingSoon: 'Coming soon...',
         viewLatest: 'View the latest from'
     },
+    ru: {
+        explore: 'Исследовать сообщество',
+        boards: 'Доски объявлений',
+        market: 'Рынок',
+        profile: 'Профиль',
+        welcome: 'Добро пожаловать в UniBridge',
+        signIn: 'Войти',
+        signInMsg: 'Пожалуйста, войдите, чтобы присоединиться к сообществу.',
+        comingSoon: 'Скоро будет...',
+        viewLatest: 'Посмотреть последние из'
+    },
+    zh: {
+        explore: '探索社区',
+        boards: '看板',
+        market: '市场',
+        profile: '个人资料',
+        welcome: '欢迎来到 UniBridge',
+        signIn: '登录',
+        signInMsg: '请登录以加入社区。',
+        comingSoon: '即将推出...',
+        viewLatest: '查看最新动态'
+    },
     ja: {
         explore: 'コミュニティを探索',
         boards: '掲示板',
@@ -60,28 +82,6 @@ const translations = {
         signInMsg: 'コミュニティに参加するにはサインインしてください。',
         comingSoon: '近日公開...',
         viewLatest: '最新の投稿を見る'
-    },
-    ar: {
-        explore: 'استكشف المجتمع',
-        boards: 'المنتديات',
-        market: 'السوق',
-        profile: 'الملف الشخصي',
-        welcome: 'مرحباً بكم في UniBridge',
-        signIn: 'تسجيل الدخول',
-        signInMsg: 'يرجى تسجيل الدخول للانضمام إلى المجتمع.',
-        comingSoon: 'قريباً...',
-        viewLatest: 'عرض أحدث من'
-    },
-    fr: {
-        explore: 'Explorer la communauté',
-        boards: 'Tableaux',
-        market: 'Marché',
-        profile: 'Profil',
-        welcome: 'Bienvenue sur UniBridge',
-        signIn: 'Se connecter',
-        signInMsg: 'Veuillez vous connecter pour rejoindre la communauté.',
-        comingSoon: 'Bientôt disponible...',
-        viewLatest: 'Voir les dernières nouveautés de'
     }
 };
 
@@ -98,16 +98,16 @@ class UbLangMenu extends HTMLElement {
 
     render() {
         const langs = [
-            { code: 'ko', name: '한국어' },
             { code: 'en', name: 'English' },
-            { code: 'ja', name: '日本語' },
-            { code: 'ar', name: 'العربية' },
-            { code: 'fr', name: 'Français' }
+            { code: 'ko', name: '한국어' },
+            { code: 'ru', name: 'Русский' },
+            { code: 'zh', name: '中文' },
+            { code: 'ja', name: '日本語' }
         ];
 
         this.innerHTML = `
             <div class="lang-dropdown">
-                <button class="lang-btn"><i class="fas fa-globe"></i></button>
+                <button class="lang-btn" aria-label="Select Language"><i class="fas fa-globe"></i></button>
                 <div class="lang-content">
                     ${langs.map(l => `
                         <div class="lang-option ${state.currentLanguage === l.code ? 'active' : ''}" data-lang="${l.code}">
@@ -126,7 +126,6 @@ class UbLangMenu extends HTMLElement {
         this.querySelectorAll('.lang-option').forEach(el => {
             el.addEventListener('click', () => {
                 state.currentLanguage = el.dataset.lang;
-                document.body.className = state.currentLanguage === 'ar' ? 'rtl' : '';
                 router.navigate(state.currentView);
                 renderLangMenu();
             });
