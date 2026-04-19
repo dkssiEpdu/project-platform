@@ -24,6 +24,8 @@ UniBridge is a high-performance community platform designed for international st
 2. **UI Update:** Transitioned to a clean white background with a bright lime green logo and vibrant accents.
 3. **i18n:** Implemented a lightweight translation dictionary and language switcher in the header.
 4. **Components:** Custom elements for `ub-nav`, `ub-post`, `ub-auth`, etc.
+
+
 5. **Services:** Firebase integration for real-time data and authentication.
 6. **Router:** Custom hash-based routing for seamless view transitions.
 7. **Multi-Language Support (v1.1):** Expanded support to 5 languages (EN, KO, RU, ZH, JA) and refined the selection UI with modern animations.
