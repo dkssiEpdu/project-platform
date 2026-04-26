@@ -53,10 +53,12 @@ const translations = {
         menu: '메뉴',
         showOriginal: '원문 보기',
         showTranslated: '번역본 보기',
+        showOriginal: '원문 보기',
+        showTranslated: '번역본 보기',
         signUp: '회원가입',
         logout: '로그아웃'
-    },
-    en: {
+        },
+        en: {
         explore: 'Explore Community',
         boards: 'Boards',
         market: 'Marketplace',
@@ -74,8 +76,10 @@ const translations = {
         selectCategory: 'Select Category',
         menu: 'Menu',
         showOriginal: 'Show Original',
-        showTranslated: 'Show Translated'
-    },
+        showTranslated: 'Show Translated',
+        signUp: 'Sign Up',
+        logout: 'Logout'
+        },
     ru: {
         explore: 'Исследовать сообщество',
         boards: 'Доски объявлений',
@@ -223,18 +227,31 @@ class UbUserMenu extends HTMLElement {
     }
 
     render() {
+        const isLoggedIn = !!state.user;
         this.innerHTML = `
             <div class="lang-dropdown">
                 <button class="lang-btn user-menu-btn" aria-label="User Menu">
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="lang-content user-menu-content">
-                    <div class="lang-option" data-action="write">
-                        <i class="fas fa-pen-nib" style="margin-right: 10px; width: 16px;"></i> ${t('createPost')}
-                    </div>
-                    <div class="lang-option" data-action="profile">
-                        <i class="fas fa-user-circle" style="margin-right: 10px; width: 16px;"></i> ${t('profile')}
-                    </div>
+                    ${isLoggedIn ? `
+                        <div class="lang-option" data-action="write">
+                            <i class="fas fa-pen-nib" style="margin-right: 10px; width: 16px;"></i> ${t('createPost')}
+                        </div>
+                        <div class="lang-option" data-action="profile">
+                            <i class="fas fa-user-circle" style="margin-right: 10px; width: 16px;"></i> ${t('profile')}
+                        </div>
+                        <div class="lang-option" data-action="logout" style="border-top: 1px solid var(--glass-border); margin-top: 5px; color: #ff4757;">
+                            <i class="fas fa-sign-out-alt" style="margin-right: 10px; width: 16px;"></i> ${t('logout')}
+                        </div>
+                    ` : `
+                        <div class="lang-option" data-action="signin">
+                            <i class="fas fa-sign-in-alt" style="margin-right: 10px; width: 16px;"></i> ${t('signIn')}
+                        </div>
+                        <div class="lang-option" data-action="signup">
+                            <i class="fas fa-user-plus" style="margin-right: 10px; width: 16px;"></i> ${t('signUp')}
+                        </div>
+                    `}
                 </div>
             </div>
         `;
@@ -250,7 +267,14 @@ class UbUserMenu extends HTMLElement {
         this.querySelectorAll('.lang-option').forEach(el => {
             el.addEventListener('click', () => {
                 const action = el.dataset.action;
-                router.navigate(action);
+                if (action === 'logout') {
+                    auth.signOut().then(() => {
+                        state.user = null;
+                        router.navigate('home');
+                    });
+                } else {
+                    router.navigate(action);
+                }
             });
         });
     }
@@ -424,6 +448,39 @@ const router = {
 
             document.getElementById('cancel-post').addEventListener('click', () => router.navigate('home'));
         },
+        signin: () => {
+            const container = document.getElementById('view-container');
+            container.innerHTML = `
+                <div class="card fade-in" style="max-width: 400px; margin: 0 auto; padding: 40px 20px; text-align: center;">
+                    <h2 style="margin-bottom: 30px;">${t('signIn')}</h2>
+                    <div style="display: grid; gap: 16px;">
+                        <input type="email" id="auth-email" placeholder="Email" style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--bg-main); font-family: inherit;">
+                        <input type="password" id="auth-password" placeholder="Password" style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--bg-main); font-family: inherit;">
+                        <button id="do-signin" style="padding: 14px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 700; cursor: pointer;">${t('signIn')}</button>
+                        <button id="go-signup-btn" style="padding: 14px; border-radius: 12px; border: 1px solid var(--glass-border); background: none; color: var(--text-main); font-weight: 700; cursor: pointer;">${t('signUp')}</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('go-signup-btn').addEventListener('click', () => router.navigate('signup'));
+        },
+        signup: () => {
+            const container = document.getElementById('view-container');
+            container.innerHTML = `
+                <div class="card fade-in" style="max-width: 400px; margin: 0 auto; padding: 40px 20px; text-align: center;">
+                    <h2 style="margin-bottom: 30px;">${t('signUp')}</h2>
+                    <div style="display: grid; gap: 16px;">
+                        <input type="text" id="reg-name" placeholder="Full Name" style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--bg-main); font-family: inherit;">
+                        <input type="email" id="reg-email" placeholder="Email" style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--bg-main); font-family: inherit;">
+                        <input type="password" id="reg-password" placeholder="Password" style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--bg-main); font-family: inherit;">
+                        <button id="do-signup" style="padding: 14px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 700; cursor: pointer;">${t('signUp')}</button>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 10px;">
+                            Already have an account? <span id="go-signin" style="color: var(--primary); font-weight: 700; cursor: pointer;">${t('signIn')}</span>
+                        </p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('go-signin').addEventListener('click', () => router.navigate('signin'));
+        },
         boards: () => {
             document.getElementById('view-container').innerHTML = `
                 <h2 style="margin-bottom: 20px;">${t('boards')}</h2>
@@ -441,14 +498,46 @@ const router = {
             document.getElementById('view-container').innerHTML = `<h2>${t('market')}</h2><p>${t('comingSoon')}</p>`;
         },
         profile: () => {
+            const isLoggedIn = !!state.user;
+            if (!isLoggedIn) {
+                document.getElementById('view-container').innerHTML = `
+                    <div class="card" style="text-align: center; padding: 40px 20px;">
+                        <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--primary); margin: 0 auto 16px;"></div>
+                        <h2>${t('welcome')}</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 24px;">${t('signInMsg')}</p>
+                        <button id="profile-signin" style="padding: 12px 32px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 700; cursor: pointer;">${t('signIn')}</button>
+                    </div>
+                `;
+                document.getElementById('profile-signin').addEventListener('click', () => router.navigate('signin'));
+                return;
+            }
+            
             document.getElementById('view-container').innerHTML = `
-                <div class="card" style="text-align: center; padding: 40px 20px;">
-                    <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--primary); margin: 0 auto 16px;"></div>
-                    <h2>${t('welcome')}</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 24px;">${t('signInMsg')}</p>
-                    <button style="padding: 12px 32px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 700;">${t('signIn')}</button>
+                <div class="card fade-in" style="text-align: center; padding: 40px 20px;">
+                    <div style="width: 100px; height: 100px; border-radius: 50%; background: var(--primary-light); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--primary);">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h2>${state.user.displayName || 'UniBridge User'}</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">${state.user.email}</p>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 30px;">
+                        <div class="card" style="padding: 15px;">
+                            <div style="font-weight: 700; font-size: 1.2rem;">0</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">Posts</div>
+                        </div>
+                        <div class="card" style="padding: 15px;">
+                            <div style="font-weight: 700; font-size: 1.2rem;">0</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">Comments</div>
+                        </div>
+                    </div>
+                    <button id="do-logout" style="padding: 12px 32px; border-radius: 12px; border: 1px solid #ff4757; background: none; color: #ff4757; font-weight: 700; cursor: pointer;">${t('logout')}</button>
                 </div>
             `;
+            document.getElementById('do-logout').addEventListener('click', () => {
+                auth.signOut().then(() => {
+                    state.user = null;
+                    router.navigate('home');
+                });
+            });
         }
     },
 
@@ -485,6 +574,13 @@ function renderHeader() {
 document.addEventListener('DOMContentLoaded', () => {
     router.navigate('home');
     renderHeader();
+
+    // Logo Click Navigation
+    const logo = document.querySelector('.logo');
+    if (logo) {
+        logo.style.cursor = 'pointer';
+        logo.addEventListener('click', () => router.navigate('home'));
+    }
 
     // Close dropdowns on outside click
     document.addEventListener('click', () => {
