@@ -21,6 +21,7 @@ UniBridge is a high-performance community platform designed for international st
 7. **Smart Search:** Quickly find information across all boards.
 8. **Profile Management:** Custom profiles and post history.
 9. **Post Detail & Comments (v1.6):** Users can click on any post to view its full content and participate in discussions through a real-time commenting system.
+10. **Full-Context Translation (v1.7):** Automatic AI translation now extends to post details and individual comments. Users can toggle between the original and translated versions for any content, including user-generated replies.
 
 ## Technical Implementation (History & Progress)
 1. **Foundation:** Clean slate with modern CSS Reset and global variables.
@@ -35,4 +36,5 @@ UniBridge is a high-performance community platform designed for international st
 10. **Enhanced AI Translation (v1.4):** Upgraded the translation system to support multi-directional translation with robust source language detection (distinguishing Korean and English). This resolves issues with MyMemory's unreliable 'auto' detection. Added a "Show Original" toggle to `UbPostCard` for better user control and transparency.
 11. **Navigation Refactor (v1.5):** Removed the bottom toolbar (`#bottom-nav`) entirely to provide a more focused, content-centric UI. Integrated core navigation (Marketplace/Cart and Boards) directly into the "User Menu" in the header, aligning them with login/signup buttons for a streamlined experience.
 12. **Menu Expansion & Interactions (v1.6):** Expanded the Header Menu with "Community" and "Housing" (집 계약) options. Implemented a detailed post view with a commenting system, allowing users to click on feed items to read full content and leave replies.
+13. **Comment & Detail Translation (v1.7):** Modularized comments into a `UbComment` component with built-in translation logic. Upgraded the `post` router view to support real-time translation of the main content and all replies, including "Show Original" toggles for every translated element.
 
