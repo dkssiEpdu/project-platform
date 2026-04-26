@@ -26,9 +26,9 @@ const state = {
     boards: ['General', 'Visa', 'Jobs', 'Housing', 'Marketplace'],
     translationCache: {},
     posts: [
-        { title: 'Best Korean Language Schools in Seoul?', content: 'I am planning to study Korean this summer. Any recommendations?', author: 'Kim_Study', likes: 12, comments: 5, category: 'General' },
-        { title: 'D-2 Visa Extension Experience', content: 'Just finished my extension at the immigration office. Here are some tips...', author: 'GlobalStudent', likes: 45, comments: 22, category: 'Visa' },
-        { title: 'Subletting my room in Hongdae', content: 'Available from June to August. Close to the station!', author: 'Traveler_KR', likes: 8, comments: 3, category: 'Housing' }
+        { id: '1', title: 'Best Korean Language Schools in Seoul?', content: 'I am planning to study Korean this summer. Any recommendations?', author: 'Kim_Study', likes: 12, category: 'General', time: '2 hours ago', comments: [{ author: 'StudentA', content: 'Yonsei KLI is great!', time: '1 hour ago' }] },
+        { id: '2', title: 'D-2 Visa Extension Experience', content: 'Just finished my extension at the immigration office. Here are some tips...', author: 'GlobalStudent', likes: 45, category: 'Visa', time: '5 hours ago', comments: [] },
+        { id: '3', title: 'Subletting my room in Hongdae', content: 'Available from June to August. Close to the station!', author: 'Traveler_KR', likes: 8, category: 'Housing', time: '1 day ago', comments: [] }
     ]
 };
 
@@ -36,8 +36,10 @@ const state = {
 const translations = {
     ko: {
         explore: '커뮤니티 탐색',
+        community: '커뮤니티',
         boards: '게시판',
         market: '장터',
+        housing: '집 계약',
         profile: '프로필',
         welcome: 'UniBridge에 오신 것을 환영합니다',
         signIn: '로그인',
@@ -54,12 +56,17 @@ const translations = {
         showOriginal: '원문 보기',
         showTranslated: '번역본 보기',
         signUp: '회원가입',
-        logout: '로그아웃'
+        logout: '로그아웃',
+        comments: '댓글',
+        addComment: '댓글 달기',
+        postComment: '등록'
         },
         en: {
         explore: 'Explore Community',
+        community: 'Community',
         boards: 'Boards',
         market: 'Marketplace',
+        housing: 'Housing',
         profile: 'Profile',
         welcome: 'Welcome to UniBridge',
         signIn: 'Sign In',
@@ -76,12 +83,17 @@ const translations = {
         showOriginal: 'Show Original',
         showTranslated: 'Show Translated',
         signUp: 'Sign Up',
-        logout: 'Logout'
+        logout: 'Logout',
+        comments: 'Comments',
+        addComment: 'Add a comment...',
+        postComment: 'Post'
         },
     ru: {
         explore: 'Исследовать сообщество',
+        community: 'Сообщество',
         boards: 'Доски объявлений',
         market: 'Рынок',
+        housing: 'Жилье',
         profile: 'Профиль',
         welcome: 'Добро пожаловать в UniBridge',
         signIn: 'Войти',
@@ -96,12 +108,17 @@ const translations = {
         selectCategory: 'Выберите категорию',
         menu: 'Меню',
         showOriginal: 'Показать оригинал',
-        showTranslated: 'Показать перевод'
+        showTranslated: 'Показать перевод',
+        comments: 'Комментарии',
+        addComment: 'Добавить комментарий...',
+        postComment: 'Отправить'
     },
     zh: {
         explore: '探索社区',
+        community: '社区',
         boards: '看板',
         market: '市场',
+        housing: '房屋',
         profile: '个人资料',
         welcome: '欢迎来到 UniBridge',
         signIn: '登录',
@@ -116,12 +133,17 @@ const translations = {
         selectCategory: '选择分类',
         menu: '菜单',
         showOriginal: '显示原文',
-        showTranslated: '显示翻译'
+        showTranslated: '显示翻译',
+        comments: '评论',
+        addComment: '添加评论...',
+        postComment: '发布'
     },
     ja: {
         explore: 'コミュニティを探索',
+        community: 'コミュニティ',
         boards: '掲示板',
         market: 'マーケット',
+        housing: '住宅',
         profile: 'プロフィール',
         welcome: 'UniBridgeへようこそ',
         signIn: 'サイン인',
@@ -136,7 +158,10 @@ const translations = {
         selectCategory: 'カテゴリーを選択',
         menu: 'メニュー',
         showOriginal: '原文を見る',
-        showTranslated: '翻訳を見る'
+        showTranslated: '翻訳を見る',
+        comments: 'コメント',
+        addComment: 'コメントを追加...',
+        postComment: '投稿'
     }
 };
 
@@ -232,11 +257,17 @@ class UbUserMenu extends HTMLElement {
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="lang-content user-menu-content">
+                    <div class="lang-option" data-action="home">
+                        <i class="fas fa-users" style="margin-right: 10px; width: 16px;"></i> ${t('community')}
+                    </div>
                     <div class="lang-option" data-action="market">
                         <i class="fas fa-shopping-cart" style="margin-right: 10px; width: 16px;"></i> ${t('market')}
                     </div>
                     <div class="lang-option" data-action="boards">
                         <i class="fas fa-th-list" style="margin-right: 10px; width: 16px;"></i> ${t('boards')}
+                    </div>
+                    <div class="lang-option" data-action="housing">
+                        <i class="fas fa-home" style="margin-right: 10px; width: 16px;"></i> ${t('housing')}
                     </div>
                     <div style="height: 1px; background: var(--glass-border); margin: 5px 0;"></div>
                     ${isLoggedIn ? `
@@ -302,7 +333,7 @@ class UbPostCard extends HTMLElement {
         const hasTranslation = !!this._translatedTitle;
 
         this.innerHTML = `
-            <div class="card fade-in">
+            <div class="card fade-in" style="cursor: pointer;">
                 <div class="card-header" style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                     <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light);"></div>
                     <div style="flex: 1;">
@@ -322,16 +353,22 @@ class UbPostCard extends HTMLElement {
                 <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px;">${content}</p>
                 <div style="display: flex; gap: 16px; font-size: 0.85rem; color: var(--text-muted);">
                     <span><i class="far fa-heart"></i> ${d.likes || 0}</span>
-                    <span><i class="far fa-comment"></i> ${d.comments || 0}</span>
+                    <span><i class="far fa-comment"></i> ${d.comments ? d.comments.length : 0}</span>
                 </div>
             </div>
         `;
+
+        this.addEventListener('click', (e) => {
+            if (e.target.closest('.toggle-translate')) return;
+            router.navigate('post', d.id);
+        });
 
         if (hasTranslation) {
             const btn = this.querySelector('.toggle-translate');
             if (btn) {
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     this._showingOriginal = !this._showingOriginal;
                     this.render(true);
                 });
@@ -375,6 +412,71 @@ const router = {
                 feed.appendChild(postEl);
             });
         },
+        post: (postId) => {
+            const post = state.posts.find(p => p.id === postId);
+            if (!post) {
+                router.navigate('home');
+                return;
+            }
+
+            const container = document.getElementById('view-container');
+            container.innerHTML = `
+                <button id="back-home" style="background: none; border: none; color: var(--primary); font-weight: 700; cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-arrow-left"></i> Back
+                </button>
+                <div class="card fade-in">
+                    <div class="card-header" style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                        <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--primary-light);"></div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 1rem;">${post.author}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">${post.time} in ${post.category}</div>
+                        </div>
+                    </div>
+                    <h2 style="margin-bottom: 12px; font-size: 1.5rem; line-height: 1.3;">${post.title}</h2>
+                    <p style="color: var(--text-main); font-size: 1.05rem; margin-bottom: 24px; white-space: pre-wrap;">${post.content}</p>
+                    <div style="display: flex; gap: 20px; font-size: 0.9rem; color: var(--text-muted); border-top: 1px solid var(--glass-border); padding-top: 16px;">
+                        <span><i class="far fa-heart"></i> ${post.likes}</span>
+                        <span><i class="far fa-comment"></i> ${post.comments.length}</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 32px;">
+                    <h3 style="margin-bottom: 16px; font-size: 1.1rem;">${t('comments')} (${post.comments.length})</h3>
+                    <div id="comments-list" style="display: grid; gap: 12px; margin-bottom: 24px;">
+                        ${post.comments.map(c => `
+                            <div class="card" style="padding: 16px; background: oklch(98% 0.01 145);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span style="font-weight: 700; font-size: 0.85rem;">${c.author}</span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">${c.time}</span>
+                                </div>
+                                <p style="font-size: 0.95rem;">${c.content}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="card" style="padding: 16px;">
+                        <textarea id="comment-input" placeholder="${t('addComment')}" style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); background: var(--bg-main); font-family: inherit; resize: none; margin-bottom: 12px;" rows="3"></textarea>
+                        <div style="display: flex; justify-content: flex-end;">
+                            <button id="submit-comment" style="padding: 10px 24px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 700; cursor: pointer;">${t('postComment')}</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('back-home').addEventListener('click', () => router.navigate('home'));
+            document.getElementById('submit-comment').addEventListener('click', () => {
+                const content = document.getElementById('comment-input').value;
+                if (content.trim()) {
+                    const newComment = {
+                        author: state.user ? state.user.displayName || 'Me' : 'Me',
+                        content,
+                        time: 'Just now'
+                    };
+                    post.comments.push(newComment);
+                    router.navigate('post', postId);
+                }
+            });
+        },
         write: () => {
             const container = document.getElementById('view-container');
             container.innerHTML = `
@@ -410,13 +512,14 @@ const router = {
 
                 if (title && content) {
                     const newPost = {
+                        id: Date.now().toString(),
                         title,
                         content,
                         category,
                         author: state.user ? state.user.displayName || 'Me' : 'Me',
                         time: 'Just now',
                         likes: 0,
-                        comments: 0
+                        comments: []
                     };
                     state.posts.unshift(newPost);
                     router.navigate('home');
@@ -471,6 +574,15 @@ const router = {
                 </div>
             `;
         },
+        housing: () => {
+            document.getElementById('view-container').innerHTML = `
+                <h2 style="margin-bottom: 20px;">${t('housing')}</h2>
+                <div class="card" style="text-align: center; padding: 40px 20px;">
+                    <i class="fas fa-home" style="font-size: 3rem; color: var(--primary); margin-bottom: 16px;"></i>
+                    <p>${t('comingSoon')}</p>
+                </div>
+            `;
+        },
         market: () => {
             document.getElementById('view-container').innerHTML = `<h2>${t('market')}</h2><p>${t('comingSoon')}</p>`;
         },
@@ -518,10 +630,11 @@ const router = {
         }
     },
 
-    navigate: (view) => {
+    navigate: (view, params) => {
         state.currentView = view;
-        router.views[view]();
+        router.views[view](params);
         renderHeader();
+        window.scrollTo(0, 0);
     }
 };
 

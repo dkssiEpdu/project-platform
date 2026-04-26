@@ -20,6 +20,7 @@ UniBridge is a high-performance community platform designed for international st
 6. **Automatic Post Translation (v1.4):** AI-powered real-time translation for all user posts. Supports automatic source language detection and provides a toggle to switch between original and translated versions.
 7. **Smart Search:** Quickly find information across all boards.
 8. **Profile Management:** Custom profiles and post history.
+9. **Post Detail & Comments (v1.6):** Users can click on any post to view its full content and participate in discussions through a real-time commenting system.
 
 ## Technical Implementation (History & Progress)
 1. **Foundation:** Clean slate with modern CSS Reset and global variables.
@@ -30,9 +31,8 @@ UniBridge is a high-performance community platform designed for international st
 6. **Router:** Custom hash-based routing for seamless view transitions.
 7. **Multi-Language Support (v1.1):** Expanded support to 5 languages (EN, KO, RU, ZH, JA) and refined the selection UI with modern animations.
 8. **AI Translation (v1.2):** Integrated MyMemory API for automatic, real-time translation of user-generated content with client-side caching.
-## Technical Implementation (History & Progress)
-...
 9. **User Actions Menu (v1.3):** Refined the header layout to include a dedicated "User Menu" next to the language selector, consolidating "Create Post" and other shortcuts.
 10. **Enhanced AI Translation (v1.4):** Upgraded the translation system to support multi-directional translation with robust source language detection (distinguishing Korean and English). This resolves issues with MyMemory's unreliable 'auto' detection. Added a "Show Original" toggle to `UbPostCard` for better user control and transparency.
 11. **Navigation Refactor (v1.5):** Removed the bottom toolbar (`#bottom-nav`) entirely to provide a more focused, content-centric UI. Integrated core navigation (Marketplace/Cart and Boards) directly into the "User Menu" in the header, aligning them with login/signup buttons for a streamlined experience.
+12. **Menu Expansion & Interactions (v1.6):** Expanded the Header Menu with "Community" and "Housing" (집 계약) options. Implemented a detailed post view with a commenting system, allowing users to click on feed items to read full content and leave replies.
 
