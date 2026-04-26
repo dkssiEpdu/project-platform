@@ -518,6 +518,15 @@ document.addEventListener('DOMContentLoaded', () => {
     router.navigate('home');
     document.querySelector('.logo')?.addEventListener('click', () => router.navigate('home'));
     document.addEventListener('click', () => document.querySelectorAll('.lang-content').forEach(el => el.classList.remove('show')));
+
+    // Splash Screen Transition
+    setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+            splash.classList.add('fade-out');
+            setTimeout(() => splash.remove(), 800);
+        }
+    }, 2000);
 });
 
 onAuthStateChanged(auth, (user) => { state.user = user; });
