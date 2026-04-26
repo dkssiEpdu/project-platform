@@ -142,16 +142,26 @@ function t(key) {
 
 async function translateText(text, targetLang) {
     if (!text) return text;
+
+    // Simple language detection (Korean vs English)
+    const isKorean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/.test(text);
+    const sourceLang = isKorean ? 'ko' : 'en';
+
+    if (sourceLang === targetLang) return text;
     
     const cacheKey = `${text}_${targetLang}`;
     if (state.translationCache[cacheKey]) return state.translationCache[cacheKey];
 
     try {
-        const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=auto|${targetLang}`);
+        const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`);
         const data = await response.json();
-        const translated = data.responseData.translatedText;
-        state.translationCache[cacheKey] = translated;
-        return translated;
+        
+        if (data.responseStatus === 200) {
+            const translated = data.responseData.translatedText;
+            state.translationCache[cacheKey] = translated;
+            return translated;
+        }
+        return text;
     } catch (error) {
         console.error('Translation error:', error);
         return text;
