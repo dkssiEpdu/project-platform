@@ -22,6 +22,7 @@ UniBridge is a high-performance community platform designed for international st
 8. **Profile Management:** Custom profiles and post history.
 9. **Post Detail & Comments (v1.6):** Users can click on any post to view its full content and participate in discussions through a real-time commenting system.
 10. **Full-Context Translation (v1.7):** Automatic AI translation now extends to post details and individual comments. Users can toggle between the original and translated versions for any content, including user-generated replies.
+11. **About UniBridge Page (v1.8):** Added a dedicated "About UniBridge" page reachable from the User Menu. This page provides a detailed overview of the platform's mission, key features (AI translation, diverse boards, real-time community), and value proposition for international students in Korea.
 
 ## Technical Implementation (History & Progress)
 1. **Foundation:** Clean slate with modern CSS Reset and global variables.

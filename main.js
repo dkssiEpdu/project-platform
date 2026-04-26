@@ -60,7 +60,16 @@ const translations = {
         comments: '댓글',
         addComment: '댓글 달기',
         postComment: '등록',
-        back: '뒤로가기'
+        back: '뒤로가기',
+        about: 'UniBridge 소개',
+        aboutTitle: '한국 유학생을 위한 최고의 커뮤니티, UniBridge',
+        aboutDesc: 'UniBridge는 한국에서 공부하거나 거주하는 외국인 유학생들을 위한 고성능 커뮤니티 플랫폼입니다. "에브리타임"에서 영감을 받아 비자, 대학 생활, 주거 정보, 중고 장터 등 유학생들에게 꼭 필요한 정보를 공유하는 공간을 제공합니다.',
+        aboutFeature1Title: 'AI 자동 번역',
+        aboutFeature1Desc: '전 세계 학생들과 언어 장벽 없이 소통하세요. 모든 게시물과 댓글은 AI를 통해 실시간으로 번역됩니다.',
+        aboutFeature2Title: '다양한 게시판',
+        aboutFeature2Desc: '비자, 구인구직, 주거, 장터 등 유학생 맞춤형 카테고리에서 정확한 정보를 찾아보세요.',
+        aboutFeature3Title: '실시간 커뮤니티',
+        aboutFeature3Desc: '실시간 피드와 댓글 시스템을 통해 한국 생활의 궁금증을 즉시 해결할 수 있습니다.'
     },
     en: {
         explore: 'Explore Community',
@@ -88,7 +97,16 @@ const translations = {
         comments: 'Comments',
         addComment: 'Add a comment...',
         postComment: 'Post',
-        back: 'Back'
+        back: 'Back',
+        about: 'About UniBridge',
+        aboutTitle: 'The Ultimate Community for International Students in Korea',
+        aboutDesc: 'UniBridge is a high-performance community platform designed for international students living or studying in Korea. Inspired by "Everytime," we provide a space to share essential information such as visas, university life, housing, and a marketplace.',
+        aboutFeature1Title: 'AI Auto-Translation',
+        aboutFeature1Desc: 'Communicate with students worldwide without language barriers. All posts and comments are translated in real-time via AI.',
+        aboutFeature2Title: 'Diverse Boards',
+        aboutFeature2Desc: 'Find accurate information in categories tailored for international students, including Visas, Jobs, Housing, and Marketplace.',
+        aboutFeature3Title: 'Real-time Community',
+        aboutFeature3Desc: 'Solve your questions about life in Korea immediately through real-time feeds and a commenting system.'
     },
     ru: {
         explore: 'Исследовать сообщество',
@@ -114,7 +132,16 @@ const translations = {
         comments: 'Комментарии',
         addComment: 'Добавить комментарий...',
         postComment: 'Отправить',
-        back: 'Назад'
+        back: 'Назад',
+        about: 'О UniBridge',
+        aboutTitle: 'Лучшее сообщество для иностранных студентов в Корее',
+        aboutDesc: 'UniBridge — это высокопроизводительная платформа сообщества, разработанная для иностранных студентов, живущих или обучающихся в Корее. Вдохновленная «Everytime», она предоставляет пространство для обмена важной информацией, такой как визы, университетская жизнь, жилье и рынок.',
+        aboutFeature1Title: 'AI Автоперевод',
+        aboutFeature1Desc: 'Общайтесь со студентами по всему миру без языковых барьеров. Все посты и комментарии переводятся в реальном времени с помощью ИИ.',
+        aboutFeature2Title: 'Разнообразные доски',
+        aboutFeature2Desc: 'Найдите точную информацию в категориях, адаптированных для иностранных студентов, включая визы, работу, жилье и рынок.',
+        aboutFeature3Title: 'Сообщество в реальном времени',
+        aboutFeature3Desc: 'Мгновенно решайте свои вопросы о жизни в Корее с помощью лент в реальном времени и системы комментирования.'
     },
     zh: {
         explore: '探索社区',
@@ -140,18 +167,27 @@ const translations = {
         comments: '评论',
         addComment: '添加评论...',
         postComment: '发布',
-        back: '返回'
+        back: '返回',
+        about: '关于 UniBridge',
+        aboutTitle: '韩国留学生的终极社区',
+        aboutDesc: 'UniBridge 是一个专为在韩生活或学习的国际学生设计的高性能社区平台。受 "Everytime" 启发，我们提供了一个分享签证、大学生活、住房和二手市场等重要信息的空间。',
+        aboutFeature1Title: 'AI 自动翻译',
+        aboutFeature1Desc: '与全球学生无障碍沟通。所有帖子和评论都通过 AI 实时翻译。',
+        aboutFeature2Title: '多元化看板',
+        aboutFeature2Desc: '在为留学生量身定制的类别中查找准确信息，包括签证、工作、住房和市场。',
+        aboutFeature3Title: '实时社区',
+        aboutFeature3Desc: '通过实时动态和评论系统，立即解决您关于韩国生活的问题。'
     },
     ja: {
         explore: 'コミュニティを探索',
-        community: 'コミュニ티',
+        community: 'コミュニティ',
         boards: '掲示板',
         market: 'マーケット',
         housing: '住宅',
         profile: 'プロフィール',
         welcome: 'UniBridgeへようこそ',
-        signIn: 'サイン인',
-        signInMsg: 'コミュニティに参加するにはサイン인してください。',
+        signIn: 'サインイン',
+        signInMsg: 'コミュニティに参加するにはサインインしてください。',
         comingSoon: '近日公開...',
         viewLatest: '最新の投稿を見る',
         translated: 'AI自動翻訳',
@@ -166,8 +202,17 @@ const translations = {
         comments: 'コメント',
         addComment: 'コメントを追加...',
         postComment: '投稿',
-        back: '戻る'
-    }
+        back: '戻る',
+        about: 'UniBridgeについて',
+        aboutTitle: '韓国人留学生のための究極のコミュニティ',
+        aboutDesc: 'UniBridgeは、韓国に居住または留学している外国人留学生のために設計された高性能なコミュニティプラットフォームです。「Everytime」からインスピレーションを得て、ビザ、大学生活、住宅、マーケットなどの必須情報を共有する空間を提供します。',
+        aboutFeature1Title: 'AI自動翻訳',
+        aboutFeature1Desc: '言語の壁なく世界中の学生と交流しましょう。すべての投稿とコメントはAIを通じてリアルタイムで翻訳されます。',
+        aboutFeature2Title: '多様な掲示板',
+        aboutFeature2Desc: 'ビザ、求人、住宅、マーケットなど、留学生に特化したカテゴリーで正確な情報を見つけましょう。',
+        aboutFeature3Title: 'リアルタイムコミュニティ',
+        aboutFeature3Desc: 'リアルタイムフィードとコメントシステムを通じて、韓国生活の疑問を即座に解決できます。'
+        },
 };
 
 function t(key) {
@@ -241,6 +286,7 @@ class UbUserMenu extends HTMLElement {
                 </button>
                 <div class="lang-content user-menu-content">
                     <div class="lang-option" data-action="home"><i class="fas fa-users" style="margin-right: 10px; width: 16px;"></i> ${t('community')}</div>
+                    <div class="lang-option" data-action="about"><i class="fas fa-info-circle" style="margin-right: 10px; width: 16px;"></i> ${t('about')}</div>
                     <div class="lang-option" data-action="market"><i class="fas fa-shopping-cart" style="margin-right: 10px; width: 16px;"></i> ${t('market')}</div>
                     <div class="lang-option" data-action="boards"><i class="fas fa-th-list" style="margin-right: 10px; width: 16px;"></i> ${t('boards')}</div>
                     <div class="lang-option" data-action="housing"><i class="fas fa-home" style="margin-right: 10px; width: 16px;"></i> ${t('housing')}</div>
@@ -496,7 +542,40 @@ const router = {
         boards: () => { document.getElementById('view-container').innerHTML = `<h2>${t('boards')}</h2>`; },
         housing: () => { document.getElementById('view-container').innerHTML = `<h2>${t('housing')}</h2><p>${t('comingSoon')}</p>`; },
         market: () => { document.getElementById('view-container').innerHTML = `<h2>${t('market')}</h2><p>${t('comingSoon')}</p>`; },
-        profile: () => { document.getElementById('view-container').innerHTML = `<h2>${t('profile')}</h2>`; }
+        profile: () => { document.getElementById('view-container').innerHTML = `<h2>${t('profile')}</h2>`; },
+        about: () => {
+            const container = document.getElementById('view-container');
+            container.innerHTML = `
+                <div class="fade-in">
+                    <h2 style="margin-bottom: 24px; font-weight: 800; font-size: 2rem; color: var(--primary);">${t('about')}</h2>
+                    <div class="card" style="padding: var(--spacing-lg); margin-bottom: 32px;">
+                        <h3 style="margin-bottom: 16px; font-size: 1.4rem; line-height: 1.3;">${t('aboutTitle')}</h3>
+                        <p style="color: var(--text-main); font-size: 1.1rem; line-height: 1.6; margin-bottom: 24px;">${t('aboutDesc')}</p>
+                    </div>
+                    
+                    <div style="display: grid; gap: 20px; margin-bottom: 40px;">
+                        <div class="card" style="border-left: 4px solid var(--primary);">
+                            <h4 style="margin-bottom: 8px; font-size: 1.1rem;"><i class="fas fa-magic" style="color: var(--primary); margin-right: 10px;"></i> ${t('aboutFeature1Title')}</h4>
+                            <p style="color: var(--text-muted); font-size: 0.95rem;">${t('aboutFeature1Desc')}</p>
+                        </div>
+                        <div class="card" style="border-left: 4px solid var(--primary);">
+                            <h4 style="margin-bottom: 8px; font-size: 1.1rem;"><i class="fas fa-list-ul" style="color: var(--primary); margin-right: 10px;"></i> ${t('aboutFeature2Title')}</h4>
+                            <p style="color: var(--text-muted); font-size: 0.95rem;">${t('aboutFeature2Desc')}</p>
+                        </div>
+                        <div class="card" style="border-left: 4px solid var(--primary);">
+                            <h4 style="margin-bottom: 8px; font-size: 1.1rem;"><i class="fas fa-bolt" style="color: var(--primary); margin-right: 10px;"></i> ${t('aboutFeature3Title')}</h4>
+                            <p style="color: var(--text-muted); font-size: 0.95rem;">${t('aboutFeature3Desc')}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 40px 0;">
+                        <button onclick="router.navigate('home')" style="padding: 14px 32px; border-radius: 50px; border: none; background: var(--primary); color: white; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 15px var(--primary-light);">
+                            ${t('explore')}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
     },
     navigate: (view, params) => {
         state.currentView = view;
