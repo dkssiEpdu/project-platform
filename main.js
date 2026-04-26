@@ -53,8 +53,6 @@ const translations = {
         menu: '메뉴',
         showOriginal: '원문 보기',
         showTranslated: '번역본 보기',
-        showOriginal: '원문 보기',
-        showTranslated: '번역본 보기',
         signUp: '회원가입',
         logout: '로그아웃'
         },
@@ -234,6 +232,13 @@ class UbUserMenu extends HTMLElement {
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="lang-content user-menu-content">
+                    <div class="lang-option" data-action="market">
+                        <i class="fas fa-shopping-cart" style="margin-right: 10px; width: 16px;"></i> ${t('market')}
+                    </div>
+                    <div class="lang-option" data-action="boards">
+                        <i class="fas fa-th-list" style="margin-right: 10px; width: 16px;"></i> ${t('boards')}
+                    </div>
+                    <div style="height: 1px; background: var(--glass-border); margin: 5px 0;"></div>
                     ${isLoggedIn ? `
                         <div class="lang-option" data-action="write">
                             <i class="fas fa-pen-nib" style="margin-right: 10px; width: 16px;"></i> ${t('createPost')}
@@ -280,34 +285,6 @@ class UbUserMenu extends HTMLElement {
     }
 }
 customElements.define('ub-user-menu', UbUserMenu);
-
-class UbNav extends HTMLElement {
-    connectedCallback() {
-        this.render();
-    }
-
-    render() {
-        const items = [
-            { id: 'home', icon: 'home' },
-            { id: 'boards', icon: 'list' },
-            { id: 'market', icon: 'shopping-bag' },
-            { id: 'profile', icon: 'user' }
-        ];
-
-        this.innerHTML = items.map(item => `
-            <div class="nav-item ${state.currentView === item.id ? 'active' : ''}" data-view="${item.id}">
-                <i class="fas fa-${item.icon}"></i>
-            </div>
-        `).join('');
-
-        this.querySelectorAll('.nav-item').forEach(el => {
-            el.addEventListener('click', () => {
-                router.navigate(el.dataset.view);
-            });
-        });
-    }
-}
-customElements.define('ub-nav', UbNav);
 
 class UbPostCard extends HTMLElement {
     set post(data) {
@@ -544,15 +521,9 @@ const router = {
     navigate: (view) => {
         state.currentView = view;
         router.views[view]();
-        updateNav();
         renderHeader();
     }
 };
-
-function updateNav() {
-    const nav = document.getElementById('bottom-nav');
-    nav.innerHTML = '<ub-nav></ub-nav>';
-}
 
 function renderHeader() {
     // Render Header Actions

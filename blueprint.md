@@ -30,7 +30,9 @@ UniBridge is a high-performance community platform designed for international st
 6. **Router:** Custom hash-based routing for seamless view transitions.
 7. **Multi-Language Support (v1.1):** Expanded support to 5 languages (EN, KO, RU, ZH, JA) and refined the selection UI with modern animations.
 8. **AI Translation (v1.2):** Integrated MyMemory API for automatic, real-time translation of user-generated content with client-side caching.
+## Technical Implementation (History & Progress)
+...
 9. **User Actions Menu (v1.3):** Refined the header layout to include a dedicated "User Menu" next to the language selector, consolidating "Create Post" and other shortcuts.
 10. **Enhanced AI Translation (v1.4):** Upgraded the translation system to support multi-directional translation with robust source language detection (distinguishing Korean and English). This resolves issues with MyMemory's unreliable 'auto' detection. Added a "Show Original" toggle to `UbPostCard` for better user control and transparency.
-
+11. **Navigation Refactor (v1.5):** Removed the bottom toolbar (`#bottom-nav`) entirely to provide a more focused, content-centric UI. Integrated core navigation (Marketplace/Cart and Boards) directly into the "User Menu" in the header, aligning them with login/signup buttons for a streamlined experience.
 

@@ -207,46 +207,6 @@ body::before {
     width: 100%;
 }
 
-/* Bottom Nav (Mobile First) */
-#bottom-nav {
-    position: fixed;
-    bottom: var(--spacing-md);
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - (var(--spacing-md) * 2));
-    max-width: 400px;
-    height: 64px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--glass-shadow);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    z-index: 1000;
-}
-
-.nav-item {
-    color: var(--text-muted);
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-sm);
-}
-
-.nav-item.active {
-    color: var(--primary);
-    background: oklch(98% 0.05 145);
-    transform: scale(1.1);
-}
-
 /* Card Styles */
 .card {
     background: var(--bg-card);
