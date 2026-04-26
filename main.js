@@ -52,7 +52,9 @@ const translations = {
         selectCategory: '카테고리 선택',
         menu: '메뉴',
         showOriginal: '원문 보기',
-        showTranslated: '번역본 보기'
+        showTranslated: '번역본 보기',
+        signUp: '회원가입',
+        logout: '로그아웃'
     },
     en: {
         explore: 'Explore Community',
