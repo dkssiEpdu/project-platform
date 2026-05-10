@@ -1,7 +1,7 @@
 // UniBridge Main Entry Point
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // App Configuration
 const firebaseConfig = {
@@ -60,6 +60,8 @@ const translations = {
         comments: '댓글',
         addComment: '댓글 달기',
         postComment: '등록',
+        reply: '답글 달기',
+        cancel: '취소',
         back: '뒤로가기',
         about: 'UniBridge 소개',
         aboutTitle: '한국 유학생을 위한 최고의 커뮤니티, UniBridge',
@@ -97,6 +99,8 @@ const translations = {
         comments: 'Comments',
         addComment: 'Add a comment...',
         postComment: 'Post',
+        reply: 'Reply',
+        cancel: 'Cancel',
         back: 'Back',
         about: 'About UniBridge',
         aboutTitle: 'The Ultimate Community for International Students in Korea',
@@ -132,6 +136,8 @@ const translations = {
         comments: 'Комментарии',
         addComment: 'Добавить комментарий...',
         postComment: 'Отправить',
+        reply: 'Ответить',
+        cancel: 'Отмена',
         back: 'Назад',
         about: 'О UniBridge',
         aboutTitle: 'Лучшее сообщество для иностранных студентов в Корее',
@@ -167,6 +173,8 @@ const translations = {
         comments: '评论',
         addComment: '添加评论...',
         postComment: '发布',
+        reply: '回复',
+        cancel: '取消',
         back: '返回',
         about: '关于 UniBridge',
         aboutTitle: '韩国留学生的终极社区',
@@ -202,6 +210,8 @@ const translations = {
         comments: 'コメント',
         addComment: 'コメントを追加...',
         postComment: '投稿',
+        reply: '返信',
+        cancel: 'キャンセル',
         back: '戻る',
         about: 'UniBridgeについて',
         aboutTitle: '韓国人留学生のための究極のコミュニティ',
@@ -395,30 +405,91 @@ class UbComment extends HTMLElement {
         const useTranslated = isTranslated && !this._showingOriginal && this._translatedContent;
         const content = useTranslated ? this._translatedContent : d.content;
         const hasTranslation = !!this._translatedContent;
+        const isReply = !!d.parentId;
 
         this.innerHTML = `
-            <div class="card" style="padding: 16px; background: oklch(98% 0.01 145);">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center;">
-                    <div style="display: flex; flex-direction: column;">
-                        <span style="font-weight: 700; font-size: 0.85rem;">${d.author}</span>
-                        <span style="font-size: 0.7rem; color: var(--text-muted);">${d.time}</span>
-                    </div>
-                    ${hasTranslation ? `
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <span class="translate-badge" style="font-size: 0.6rem; padding: 2px 6px;"><i class="fas fa-magic"></i></span>
-                            <button class="toggle-translate-comment" style="background: none; border: none; font-size: 0.7rem; color: var(--primary); cursor: pointer; text-decoration: underline; font-weight: 600; padding: 0;">
-                                ${this._showingOriginal ? t('showTranslated') : t('showOriginal')}
+            <div class="comment-container" style="${isReply ? 'margin-left: 20px; border-left: 2px solid var(--primary-light); padding-left: 12px;' : ''}">
+                <div class="card" style="padding: 16px; background: ${isReply ? 'oklch(99% 0.005 145)' : 'oklch(98% 0.01 145)'}; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center;">
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="font-weight: 700; font-size: 0.85rem;">${d.author}</span>
+                            <span style="font-size: 0.7rem; color: var(--text-muted);">${d.time}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            ${hasTranslation ? `
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span class="translate-badge" style="font-size: 0.6rem; padding: 2px 6px;"><i class="fas fa-magic"></i></span>
+                                    <button class="toggle-translate-comment" style="background: none; border: none; font-size: 0.7rem; color: var(--primary); cursor: pointer; text-decoration: underline; font-weight: 600; padding: 0;">
+                                        ${this._showingOriginal ? t('showTranslated') : t('showOriginal')}
+                                    </button>
+                                </div>
+                            ` : ''}
+                            <button class="reply-btn" style="background: none; border: none; font-size: 0.75rem; color: var(--primary); cursor: pointer; font-weight: 700; padding: 4px 8px; border-radius: 4px;">
+                                <i class="fas fa-reply"></i> ${t('reply')}
                             </button>
                         </div>
-                    ` : ''}
+                    </div>
+                    <p style="font-size: 0.95rem;">${content}</p>
+                    
+                    <div class="reply-input-container" style="display: none; margin-top: 12px; animation: fadeIn 0.3s ease;">
+                        <textarea class="reply-input" placeholder="${t('addComment')}" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--bg-main); font-family: inherit; font-size: 0.9rem; resize: none;" rows="2"></textarea>
+                        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
+                            <button class="cancel-reply" style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: none; font-size: 0.8rem; font-weight: 600; cursor: pointer;">${t('cancel')}</button>
+                            <button class="submit-reply" style="padding: 6px 16px; border-radius: 8px; border: none; background: var(--primary); color: white; font-size: 0.8rem; font-weight: 700; cursor: pointer;">${t('postComment')}</button>
+                        </div>
+                    </div>
                 </div>
-                <p style="font-size: 0.95rem;">${content}</p>
+                <div class="sub-comments" style="display: grid; gap: 8px;"></div>
             </div>
         `;
+
         if (hasTranslation) {
             this.querySelector('.toggle-translate-comment').addEventListener('click', () => {
                 this._showingOriginal = !this._showingOriginal;
                 this.render(true);
+            });
+        }
+
+        const replyBtn = this.querySelector('.reply-btn');
+        const replyInputContainer = this.querySelector('.reply-input-container');
+        const cancelBtn = this.querySelector('.cancel-reply');
+        const submitBtn = this.querySelector('.submit-reply');
+
+        replyBtn.addEventListener('click', () => {
+            replyInputContainer.style.display = replyInputContainer.style.display === 'none' ? 'block' : 'none';
+            if (replyInputContainer.style.display === 'block') {
+                this.querySelector('.reply-input').focus();
+            }
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            replyInputContainer.style.display = 'none';
+        });
+
+        submitBtn.addEventListener('click', () => {
+            const content = this.querySelector('.reply-input').value;
+            if (content.trim()) {
+                const event = new CustomEvent('add-reply', {
+                    detail: {
+                        parentId: d.id,
+                        content: content.trim()
+                    },
+                    bubbles: true,
+                    composed: true
+                });
+                this.dispatchEvent(event);
+                this.querySelector('.reply-input').value = '';
+                replyInputContainer.style.display = 'none';
+            }
+        });
+
+        // Render sub-comments if they exist
+        if (d.replies && d.replies.length > 0) {
+            const subList = this.querySelector('.sub-comments');
+            d.replies.forEach(r => {
+                const replyEl = document.createElement('ub-comment');
+                replyEl.comment = { ...r, parentId: d.id };
+                subList.appendChild(replyEl);
             });
         }
     }
@@ -430,7 +501,84 @@ class UbComment extends HTMLElement {
         }
     }
 }
-customElements.define('ub-comment', UbComment);
+class UbChatbot extends HTMLElement {
+    connectedCallback() {
+        this.render();
+        this.setupListeners();
+    }
+    render() {
+        this.innerHTML = `
+            <div class="chatbot-container">
+                <div class="chatbot-window" id="chatbot-window">
+                    <div class="chatbot-header">
+                        <span style="font-weight: 800; font-size: 1.1rem;">UniBridge Bot</span>
+                        <button id="close-chat" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem;"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="chatbot-messages" id="chatbot-messages">
+                        <div class="chat-msg bot">안녕하세요! UniBridge 개발자에게 궁금한 점이 있으신가요? 메시지를 남겨주시면 확인 후 답변해 드리겠습니다.</div>
+                    </div>
+                    <div class="chatbot-input-area">
+                        <input type="text" class="chatbot-input" id="chatbot-input" placeholder="메시지를 입력하세요...">
+                        <button class="chatbot-send" id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+                <button class="chatbot-btn" id="chatbot-toggle">
+                    <i class="fas fa-comment-dots"></i>
+                </button>
+            </div>
+        `;
+    }
+    setupListeners() {
+        const toggle = this.querySelector('#chatbot-toggle');
+        const window = this.querySelector('#chatbot-window');
+        const close = this.querySelector('#close-chat');
+        const input = this.querySelector('#chatbot-input');
+        const send = this.querySelector('#chatbot-send');
+        const messages = this.querySelector('#chatbot-messages');
+
+        toggle.onclick = () => window.classList.toggle('show');
+        close.onclick = () => window.classList.remove('show');
+
+        const sendMessage = async () => {
+            const text = input.value.trim();
+            if (!text) return;
+
+            // Add user message to UI
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-msg user';
+            userMsg.textContent = text;
+            messages.appendChild(userMsg);
+            input.value = '';
+            messages.scrollTop = messages.scrollHeight;
+
+            try {
+                // Save to Firestore
+                await addDoc(collection(db, "inquiries"), {
+                    userId: state.user ? state.user.uid : 'anonymous',
+                    userEmail: state.user ? state.user.email : 'anonymous',
+                    message: text,
+                    timestamp: serverTimestamp()
+                });
+
+                // Bot reply
+                setTimeout(() => {
+                    const botMsg = document.createElement('div');
+                    botMsg.className = 'chat-msg bot';
+                    botMsg.textContent = "메시지가 개발자에게 전달되었습니다. 감사합니다!";
+                    messages.appendChild(botMsg);
+                    messages.scrollTop = messages.scrollHeight;
+                }, 1000);
+            } catch (error) {
+                console.error("Error sending message:", error);
+            }
+        };
+
+        send.onclick = sendMessage;
+        input.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
+    }
+}
+customElements.define('ub-chatbot', UbChatbot);
+
 
 // --- Router ---
 
@@ -516,19 +664,45 @@ const router = {
 
             // Render comments
             const commentsList = document.getElementById('comments-list');
-            post.comments.forEach(c => {
-                const commentEl = document.createElement('ub-comment');
-                commentEl.comment = c;
-                commentsList.appendChild(commentEl);
+            const renderComments = () => {
+                commentsList.innerHTML = '';
+                post.comments.forEach(c => {
+                    const commentEl = document.createElement('ub-comment');
+                    commentEl.comment = c;
+                    commentsList.appendChild(commentEl);
+                });
+                
+                // Update count
+                const countAll = (list) => list.reduce((acc, curr) => acc + 1 + (curr.replies ? countAll(curr.replies) : 0), 0);
+                document.getElementById('comment-count').textContent = countAll(post.comments);
+            };
+            renderComments();
+
+            container.addEventListener('add-reply', (e) => {
+                const { parentId, content } = e.detail;
+                const findAndReply = (list) => {
+                    for (const c of list) {
+                        if (c.id === parentId) {
+                            if (!c.replies) c.replies = [];
+                            c.replies.push({ id: Date.now().toString(), author: state.user ? state.user.displayName || 'Me' : 'Me', content, time: 'Just now', replies: [] });
+                            return true;
+                        }
+                        if (c.replies && findAndReply(c.replies)) return true;
+                    }
+                    return false;
+                };
+                findAndReply(post.comments);
+                renderComments();
             });
 
             document.getElementById('back-home').addEventListener('click', () => router.navigate('home'));
             document.getElementById('submit-comment').addEventListener('click', () => {
                 const content = document.getElementById('comment-input').value;
                 if (content.trim()) {
-                    const newComment = { id: Date.now().toString(), author: state.user ? state.user.displayName || 'Me' : 'Me', content, time: 'Just now' };
+                    const newComment = { id: Date.now().toString(), author: state.user ? state.user.displayName || 'Me' : 'Me', content, time: 'Just now', replies: [] };
                     post.comments.push(newComment);
-                    router.navigate('post', postId);
+                    document.getElementById('comment-input').value = '';
+                    renderComments();
                 }
             });
         },
