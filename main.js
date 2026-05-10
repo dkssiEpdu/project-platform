@@ -680,7 +680,7 @@ const router = {
             };
             renderComments();
 
-            container.addEventListener('add-reply', (e) => {
+            commentsList.addEventListener('add-reply', (e) => {
                 const { parentId, content } = e.detail;
                 const findAndReply = (list) => {
                     for (const c of list) {
