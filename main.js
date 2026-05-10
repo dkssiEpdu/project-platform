@@ -26,7 +26,7 @@ const state = {
     boards: ['General', 'Visa', 'Jobs', 'Housing', 'Marketplace'],
     translationCache: {},
     posts: [
-        { id: '1', title: 'Best Korean Language Schools in Seoul?', content: 'I am planning to study Korean this summer. Any recommendations?', author: 'Kim_Study', likes: 12, category: 'General', time: '2 hours ago', comments: [{ id: 'c1', author: 'StudentA', content: 'Yonsei KLI is great!', time: '1 hour ago' }] },
+        { id: '1', title: 'Best Korean Language Schools in Seoul?', content: 'I am planning to study Korean this summer. Any recommendations?', author: 'Kim_Study', likes: 12, category: 'General', time: '2 hours ago', comments: [{ id: 'c1', author: 'StudentA', content: 'Yonsei KLI is great!', time: '1 hour ago', replies: [] }] },
         { id: '2', title: 'D-2 Visa Extension Experience', content: 'Just finished my extension at the immigration office. Here are some tips...', author: 'GlobalStudent', likes: 45, category: 'Visa', time: '5 hours ago', comments: [] },
         { id: '3', title: 'Subletting my room in Hongdae', content: 'Available from June to August. Close to the station!', author: 'Traveler_KR', likes: 8, category: 'Housing', time: '1 day ago', comments: [] }
     ]
@@ -501,6 +501,8 @@ class UbComment extends HTMLElement {
         }
     }
 }
+customElements.define('ub-comment', UbComment);
+
 class UbChatbot extends HTMLElement {
     connectedCallback() {
         this.render();
