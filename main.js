@@ -300,25 +300,11 @@ class AtelierCard extends HTMLElement {
                 </div>
                 
                 <div class="brand-card-footer">
-                    <span style="font-size: 0.75rem; color: var(--text-muted);">By ${d.creator}</span>
-                    <button class="btn ${d.pledged ? 'btn-secondary' : 'btn-primary'}" id="pledge-btn" style="padding: 6px 16px; font-size: 0.8rem;">
-                        <i class="${d.pledged ? 'fas fa-check' : 'fas fa-heart'}" style="margin-right: 4px;"></i>
-                        ${d.pledged ? t('pledged') : t('pledge')}
-                    </button>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Director. ${d.creator}</span>
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--primary); letter-spacing: 0.05em;">${d.votes} Pledges</span>
                 </div>
             </div>
         `;
-        
-        this.querySelector('#pledge-btn').onclick = () => {
-            d.pledged = !d.pledged;
-            if (d.pledged) {
-                d.votes += 1;
-            } else {
-                d.votes -= 1;
-            }
-            saveLocalState();
-            this.render();
-        };
     }
 }
 customElements.define('atelier-card', AtelierCard);

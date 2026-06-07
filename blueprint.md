@@ -20,9 +20,9 @@ This project is transitioning from a community application (UniBridge) into a ta
 ## Features & Design Implementation Plan
 
 ### 1. Style & Design System (CSS)
-- **Typography:**
-  - Headings: `Playfair Display` (serif, elegant, luxurious).
-  - Body & Buttons: `Outfit` (sans-serif, clean, premium, geometric).
+- **Typography (Korean Seongsu Vibe):**
+  - Elegant Serif: `Cormorant Garamond` (luxurious, thin serif) paired with `Gowun Batang` (emotional Korean serif).
+  - Progressive Sans-serif: `Syne` (artistic, hip geometric sans) paired with `Outfit`.
 - **Color Palette (oklch):**
   - Ivory Clean (Light Mode - Default): Background `oklch(96% 0.005 50)`, Cards `oklch(99% 0.005 50)`.
   - Charcoal Warm (Dark Mode - Supported): Background `oklch(14% 0.015 35)`, Cards `oklch(18% 0.02 35)`.
@@ -47,7 +47,7 @@ This project is transitioning from a community application (UniBridge) into a ta
 - **Showroom (`showroom`):**
   - Active brand campaigns created by the community.
   - Display cards with custom palettes, tags, and selected fabrics.
-  - Interactive voting/pre-order mechanics (pledging support) to help designers hit production MOQ goals.
+  - Pre-order progress and stats display to show the MOQ pledging progression (pledge button removed from cards for cleaner design look).
 - **Manufacturer Matcher (`matcher`):**
   - Directory of sustainable, small-batch manufacturers in Korea.
   - Filter matches by fabric type, MOQ limits, and expertise.
