@@ -31,7 +31,7 @@ async function initFirebase() {
 // --- Application State ---
 const state = {
     currentView: 'home',
-    theme: 'dark', // 'dark' is default, 'light' is Ivory Clean
+    theme: 'light', // 'light' is default, 'dark' is supported (Charcoal Warm)
     currentLanguage: 'ko',
     user: { name: 'Designer Guest', id: 'guest' },
     incubatorForm: {
@@ -447,11 +447,8 @@ const router = {
                             개성 있는 무드 보드와 특색 있는 프리미엄 패브릭을 조합해 브랜드를 디자인하고, 크리에이터 커뮤니티 투표를 통해 MOQ 생산 목표를 실현하세요.
                         </p>
                         <div style="display: flex; gap: 16px; justify-content: center;">
-                            <button class="btn btn-primary" onclick="router.navigate('incubator')">
-                                <i class="fas fa-magic" style="margin-right: 6px;"></i> ${t('incubator')} 시작하기
-                            </button>
-                            <button class="btn btn-secondary" onclick="router.navigate('community')">
-                                ${t('community')} 참여
+                            <button class="btn btn-primary" onclick="router.navigate('community')">
+                                <i class="fas fa-users" style="margin-right: 6px;"></i> ${t('community')} 참여
                             </button>
                         </div>
                     </div>
@@ -979,6 +976,13 @@ function renderHeader() {
 document.addEventListener('DOMContentLoaded', async () => {
     // Load local storage fallback
     loadLocalState();
+    
+    // Apply theme on load
+    if (state.theme === 'light') {
+        document.body.classList.add('light-theme');
+    } else {
+        document.body.classList.remove('light-theme');
+    }
     
     // Init Firebase
     await initFirebase();

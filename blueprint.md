@@ -24,8 +24,8 @@ This project is transitioning from a community application (UniBridge) into a ta
   - Headings: `Playfair Display` (serif, elegant, luxurious).
   - Body & Buttons: `Outfit` (sans-serif, clean, premium, geometric).
 - **Color Palette (oklch):**
-  - Ivory Clean (Light Mode): Background `oklch(98% 0.005 50)`, Cards `oklch(96% 0.008 50)`, Primary Dark `oklch(25% 0.03 50)`.
-  - Charcoal Warm (Dark Mode): Background `oklch(15% 0.02 50)`, Cards `oklch(18% 0.02 50)`, Accent Highlight `oklch(85% 0.12 75)`.
+  - Ivory Clean (Light Mode - Default): Background `oklch(96% 0.005 50)`, Cards `oklch(99% 0.005 50)`.
+  - Charcoal Warm (Dark Mode - Supported): Background `oklch(14% 0.015 35)`, Cards `oklch(18% 0.02 35)`.
   - Color picker support within the brand launcher.
 - **Visual Effects:**
   - Glassmorphic navigation header.
@@ -35,7 +35,7 @@ This project is transitioning from a community application (UniBridge) into a ta
 ### 2. Core SPA Router Views (JS)
 - **Home (`home`):**
   - Luxury landing view with large typography.
-  - "Incubate Your Brand" quick start action.
+  - Community Lounge entry action (Incubator quick start action removed to keep landing page minimal).
   - Horizontal scrolling list of trending brand drafts in the showroom.
   - Sensory fabric spotlight carousel.
 - **Brand Incubator (`incubator`):**
