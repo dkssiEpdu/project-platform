@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ATELIER | Sensory Brand Launchpad</title>
+    <title>결 (GYEOL) | Independent Brand Archive</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +15,7 @@
     <!-- Splash Screen -->
     <div id="splash-screen">
         <div class="splash-content">
-            <h1 class="splash-logo">ATELIER</h1>
+            <h1 class="splash-logo">결 (GYEOL)</h1>
             <div class="splash-loader"></div>
         </div>
     </div>
@@ -24,10 +24,10 @@
     <div id="app">
         <header id="main-header">
             <div class="header-content">
-                <h1 class="logo" id="logo-btn">ATELIER<span>DRAFT</span></h1>
+                <h1 class="logo" id="logo-btn">결 (GYEOL)<span>ARCHIVE</span></h1>
                 <div class="header-actions">
                     <div id="header-nav" style="display: flex; align-items: center; gap: 8px;">
-                        <!-- SPA view buttons will be rendered here dynamically -->
+                        <!-- Navigation menu buttons rendered dynamically -->
                     </div>
                 </div>
             </div>
@@ -43,14 +43,20 @@
         </main>
         
         <footer>
-            <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
-                <p>&copy; 2026 ATELIER. Elevating independent design through sensory clothing creation.</p>
+            <div style="max-width: 1300px; margin: 0 auto; padding: 0 20px;">
+                <p>&copy; 2026 결 (GYEOL). 독립 브랜드의 미학을 기록하는 아카이브 스토어.</p>
             </div>
         </footer>
     </div>
 
+    <!-- Product Detail Overlay Drawer Slider -->
+    <div class="detail-slider-overlay" id="product-detail-overlay"></div>
+    <div class="detail-slider-panel" id="product-detail-panel">
+        <!-- Injected dynamically via Web Component -->
+    </div>
+
     <!-- Floating Assistant -->
-    <atelier-chatbot></atelier-chatbot>
+    <gyeol-chatbot></gyeol-chatbot>
 
     <!-- App Entry Module -->
     <script type="module" src="main.js"></script>

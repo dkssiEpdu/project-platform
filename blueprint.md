@@ -1,63 +1,51 @@
-# ATELIER Project Blueprint
+# GYEOL (결) Project Blueprint
 
 ## Overview
-ATELIER is a premium, high-aesthetic clothing platform designed for 20-30s brand founders who want to launch their first sensory/emotional clothing brand. It acts as an interactive brand incubator, concept showroom, manufacturer matching directory, and collaborative community hub.
+**GYEOL (결)** is a premium, high-aesthetic independent clothing product platform inspired by Musinsa, specifically tailored to Korean 20-30s design sentiments. The name "결" represents the grain of fabrics, textures, and the unique emotional flow of each boutique brand. It serves as a product catalog grid (with filtering), lookbook style archive, small-batch manufacturer matchmaking service, and product register interface.
 
 ## Technical Stack
-- **Frontend:** Vanilla HTML5, CSS3 (Baseline features, container queries, `:has()`, cascade layers, logical properties), JavaScript (ES Modules).
-- **UI Components:** Native Web Components (shadow DOM, HTML templates).
-- **Styling:** Vanilla CSS using oklch color palettes, Google Fonts (Playfair Display & Outfit), modern glassmorphism, glowing micro-interactions.
-- **Backend/Database:** Firebase Authentication, Cloud Firestore (for brand draft storage, inquiries, and showroom pre-orders).
-- **Deployment:** GitHub Pages / repository hosting (`https://github.com/dkssiEpdu/project-platform.git`).
+- **Frontend:** Vanilla HTML5, CSS3 (Baseline container queries, variables, custom properties), ES Modules JavaScript.
+- **UI Components:** Native Web Components (Shadow DOM, templates).
+- **Styling:** Custom CSS variables based on OKLCH, typography from Google Fonts (Cormorant Garamond, Gowun Batang, Syne, Outfit).
+- **Database/State:** Transparent Firestore read/write capabilities with immediate LocalStorage fallback for offline testing.
+- **Hosting/Deployment:** GitHub Repository (`https://github.com/dkssiEpdu/project-platform.git`).
 
 ---
 
-## Current Status & Transition
-This project is transitioning from a community application (UniBridge) into a tailored clothing brand launching platform (ATELIER) targeting creative fashion launchers. All core views, styles, and web components will be rebuilt to fulfill this theme.
-
----
-
-## Features & Design Implementation Plan
+## Features & UI Design
 
 ### 1. Style & Design System (CSS)
 - **Typography (Korean Seongsu Vibe):**
-  - Elegant Serif: `Cormorant Garamond` (luxurious, thin serif) paired with `Gowun Batang` (emotional Korean serif).
-  - Progressive Sans-serif: `Syne` (artistic, hip geometric sans) paired with `Outfit`.
-- **Color Palette (oklch):**
-  - Ivory Clean (Light Mode - Default): Background `oklch(96% 0.005 50)`, Cards `oklch(99% 0.005 50)`.
-  - Charcoal Warm (Dark Mode - Supported): Background `oklch(14% 0.015 35)`, Cards `oklch(18% 0.02 35)`.
-  - Color picker support within the brand launcher.
-- **Visual Effects:**
-  - Glassmorphic navigation header.
-  - Interactive grid elements with card-lift animation and drop shadows.
-  - Soft noise textures in backgrounds.
+  - Elegant Serif: `Cormorant Garamond` (luxury English serif) and `Gowun Batang` (emotional Korean serif).
+  - Progressive Sans-serif: `Syne` (progressive geometric English sans-serif) and `Outfit`.
+- **Dual Themes:**
+  - Ivory Clean (Light Mode - Default): Elegant light ivory background, pure white cards, soft coal text.
+  - Charcoal Warm (Dark Mode - Supported): Dark charcoal background, warm dark elevated cards, champagne gold accents.
+- **Visuals:**
+  - Soft noise background textures.
+  - Minimal product grid cards with elegant border glowing hover states.
 
 ### 2. Core SPA Router Views (JS)
-- **Home (`home`):**
-  - Luxury landing view with large typography.
-  - Community Lounge entry action (Incubator quick start action removed to keep landing page minimal).
-  - Horizontal scrolling list of trending brand drafts in the showroom.
-  - Sensory fabric spotlight carousel.
-- **Brand Incubator (`incubator`):**
-  - Interactive step-by-step branding tool:
-    1. **Concept**: Input brand name, tagline, choose emotional/sensory mood tags (e.g., *Minimalist, Raw & Organic, Avant-Garde, Cyber-Street, Silent Luxury*).
-    2. **Aesthetic**: Custom palette generator using oklch picker, lettering picker.
-    3. **Fabric Selection**: Select high-end fabrics (heavy cotton, raw denim, velvet, recycled linen, silk satin) with tactile explanations.
-    4. **Submit/Launch**: Finalize MOQ requirements (10 to 50 items) and publish directly to the Showroom.
-- **Showroom (`showroom`):**
-  - Active brand campaigns created by the community.
-  - Display cards with custom palettes, tags, and selected fabrics.
-  - Pre-order progress and stats display to show the MOQ pledging progression (pledge button removed from cards for cleaner design look).
-- **Manufacturer Matcher (`matcher`):**
-  - Directory of sustainable, small-batch manufacturers in Korea.
-  - Filter matches by fabric type, MOQ limits, and expertise.
-- **Collaboration Community (`community`):**
-  - Shared visual moodboards and collab request posts.
-  - Discussion forum for finding partners (pattern makers, photographers, models).
+- **Showroom (`home`):**
+  - Musinsa-style catalog grid of products.
+  - Categories: Outer, Tops, Bottoms, Accessories.
+  - Mood Filters: Minimal, Street, Avant-Garde, Silent Luxury.
+  - Dynamic category and mood filters.
+- **Product Details Panel / Dialog:**
+  - Dynamic overlay showing high-end lookbook mockup, sizing chart, price in KRW (e.g., ₩79,000), material compositions, user reviews, and Q&A form.
+- **Product Uploader (`uploader`):**
+  - Portal for brands to register products.
+  - Inputs: Brand name, Product title, Category, Price (₩), Fabric component, Color palette swatches, Description, and Mockup image selection.
+- **Lookbook Lounge (`lookbook`):**
+  - Discussion and snapshot space for users/brands to share styling tips, snapshots, and community advice.
+- **Fabric Directory (`fabrics`):**
+  - Details of premium fabrics (Organic Heavy Cotton, Raw Japanese Denim, Silk Velvet, Silk Satin, Rough Linen).
+- **Factory Matcher (`matcher`):**
+  - Catalog of small-batch sustainable manufacturers (Seoul, Busan, Daegu) with MOQ limits.
 
-### 3. Actionable Steps for the Current Requested Change
-1. **Design System & Typography Setup**: Modify `style.css` to build the new premium styling guidelines, OKLCH variables, light/dark themes, and layout helpers.
-2. **HTML Update**: Update `index.html` with new title, luxurious typography link, and shell containers.
-3. **Core Logic Reconstruction**: Re-write `main.js` from the ground up to establish ATELIER's state management, custom router, incubator wizard, showroom voting system, manufacturer directory, custom components (`<atelier-nav>`, `<atelier-card>`, `<atelier-moodboard>`, `<atelier-chatbot>`).
-4. **Local and Firebase Storage Integration**: Wire up forms to Firestore for real-time saving and reading, using local storage fallback to guarantee zero failures.
-5. **Git Configuration & Push**: Change Git remote and commit/push all codebase files to `https://github.com/dkssiEpdu/project-platform.git`.
+### 3. Actionable Steps for the Transition
+1. **Design System Configuration:** Update `style.css` to build product catalog helpers, grid layouts, product detailed cards, inputs, and lookbook feeds.
+2. **Main HTML Update:** Change `index.html` headers and links to establish the GYEOL brand identity.
+3. **Application State Reconstruction:** Re-write `main.js` state model to store products, comments, lookbooks, and manufacturer records.
+4. **Interactive Views & Custom Elements:** Build `<gyeol-nav>`, `<gyeol-product-card>`, `<gyeol-product-detail>`, and `<gyeol-chatbot>`.
+5. **Git Configuration & Push:** Stage all updated files and force push commits to remote.
