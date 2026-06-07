@@ -3,33 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UniBridge | Community for International Students in Korea</title>
+    <title>ATELIER | Sensory Brand Launchpad</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <!-- Main Font Awesome -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <!-- Fallback Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+    <!-- Splash Screen -->
     <div id="splash-screen">
         <div class="splash-content">
-            <h1 class="splash-logo">UniBridge</h1>
+            <h1 class="splash-logo">ATELIER</h1>
             <div class="splash-loader"></div>
         </div>
     </div>
+
+    <!-- Main App Container -->
     <div id="app">
         <header id="main-header">
             <div class="header-content">
-                <h1 class="logo">UniBridge</h1>
+                <h1 class="logo" id="logo-btn">ATELIER<span>DRAFT</span></h1>
                 <div class="header-actions">
-                    <div id="header-nav" style="display: flex; align-items: center; gap: 12px;">
-                        <!-- Header navigation buttons will be injected here -->
-                    </div>
-                    <div id="lang-menu">
-                        <!-- Language selector will be injected here -->
+                    <div id="header-nav" style="display: flex; align-items: center; gap: 8px;">
+                        <!-- SPA view buttons will be rendered here dynamically -->
                     </div>
                 </div>
             </div>
@@ -43,11 +41,18 @@
                 </div>
             </div>
         </main>
+        
+        <footer>
+            <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+                <p>&copy; 2026 ATELIER. Elevating independent design through sensory clothing creation.</p>
+            </div>
+        </footer>
     </div>
 
-    <ub-chatbot></ub-chatbot>
+    <!-- Floating Assistant -->
+    <atelier-chatbot></atelier-chatbot>
 
-    <!-- Firebase SDKs -->
+    <!-- App Entry Module -->
     <script type="module" src="main.js"></script>
 </body>
 </html>
