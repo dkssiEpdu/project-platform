@@ -1175,40 +1175,56 @@ const router = {
                                     }
                                 });
                                 
-                                if (foundUser && foundUser.pw === pw) {
-                                    state.user = { name: foundUser.name, id: 'user_' + Date.now() };
-                                    try {
-                                        localStorage.setItem('zipp_user', JSON.stringify(state.user));
-                                    } catch (e) {
-                                        console.warn("Failed to save user session:", e);
+                                if (foundUser) {
+                                    if (foundUser.pw === pw) {
+                                        state.user = { name: foundUser.name, id: 'user_' + Date.now() };
+                                        try {
+                                            localStorage.setItem('zipp_user', JSON.stringify(state.user));
+                                        } catch (e) {
+                                            console.warn("Failed to save user session:", e);
+                                        }
+                                        
+                                        // Sync back to local storage for future speed
+                                        try {
+                                            // Overwrite old duplicates with the valid record from Firestore
+                                            currentSignups = currentSignups.filter(u => !u || !u.email || u.email.toLowerCase() !== email);
+                                            currentSignups.push({
+                                                name: foundUser.name,
+                                                email: foundUser.email,
+                                                pw: foundUser.pw,
+                                                timestamp: foundUser.timestamp || new Date().toLocaleString('ko-KR')
+                                            });
+                                            localStorage.setItem('zipp_signups', JSON.stringify(currentSignups));
+                                        } catch (err) {
+                                            console.warn("Failed to sync Firestore user to localStorage:", err);
+                                        }
+                                        
+                                        alert(`${foundUser.name}님, 환영합니다!`);
+                                        router.navigate('home');
+                                    } else {
+                                        alert("비밀번호가 일치하지 않습니다.");
                                     }
-                                    
-                                    // Sync back to local storage for future speed
-                                    try {
-                                        // Overwrite old duplicates with the valid record from Firestore
-                                        currentSignups = currentSignups.filter(u => !u || !u.email || u.email.toLowerCase() !== email);
-                                        currentSignups.push({
-                                            name: foundUser.name,
-                                            email: foundUser.email,
-                                            pw: foundUser.pw,
-                                            timestamp: foundUser.timestamp || new Date().toLocaleString('ko-KR')
-                                        });
-                                        localStorage.setItem('zipp_signups', JSON.stringify(currentSignups));
-                                    } catch (err) {
-                                        console.warn("Failed to sync Firestore user to localStorage:", err);
-                                    }
-                                    
-                                    alert(`${foundUser.name}님, 환영합니다!`);
-                                    router.navigate('home');
                                 } else {
-                                    alert("이메일 또는 비밀번호가 일치하지 않습니다.");
+                                    alert("존재하지 않는 이메일 주소입니다. 가입 정보를 확인해 주세요.");
                                 }
                             } catch (e) {
                                 console.error("Firestore authentication failed:", e);
-                                alert("이메일 또는 비밀번호가 일치하지 않습니다.");
+                                // Fallback to local storage specific error if Firestore fails
+                                const localEmailExists = currentSignups.some(u => u && u.email && u.email.toLowerCase() === email);
+                                if (localEmailExists) {
+                                    alert("비밀번호가 일치하지 않습니다.");
+                                } else {
+                                    alert("존재하지 않는 이메일 주소입니다. 가입 정보를 확인해 주세요.");
+                                }
                             }
                         } else {
-                            alert("이메일 또는 비밀번호가 일치하지 않습니다.");
+                            // If db is not initialized, check local storage specifically
+                            const localEmailExists = currentSignups.some(u => u && u.email && u.email.toLowerCase() === email);
+                            if (localEmailExists) {
+                                alert("비밀번호가 일치하지 않습니다.");
+                            } else {
+                                alert("존재하지 않는 이메일 주소입니다. 가입 정보를 확인해 주세요.");
+                            }
                         }
                     }
                 } catch (error) {
