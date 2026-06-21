@@ -1,25 +1,24 @@
-# Login Verification & Email Notification Fix Walkthrough
+# Session Persistence & Firebase Load Fix Walkthrough
 
-Fixed issues where registered users could not log in due to email case-sensitivity and local storage cross-device isolation, and resolved missing email signup notifications.
+Fixed issues where closing the site window lost the logged-in session, and solved the login race condition where login verification failed if clicked before the Firebase SDK finished initializing.
 
 ## Changes Made
 
-1. **Email Case-Insensitive Matching**:
-   - **`main.js`**: Converted email inputs to lowercase during both signup and login before performing checks. This prevents casing mismatches (e.g. `Pvtmed1590@gmail.com` vs `pvtmed1590@gmail.com`).
+1. **Persistent Session Handling**:
+   - **`main.js`**: Saved the logged-in user state to `localStorage` under `zipp_user` upon successful registration or login.
+   - Cleared `zipp_user` from `localStorage` during logout.
+   - Updated `loadLocalState()` to retrieve and restore `zipp_user` when the application starts, keeping the user logged in across page reloads and tab closures.
 
-2. **Cross-Device Firestore Login Fallback**:
-   - **`main.js`**: Enabled storing the password (`pw` field) in Firestore during signup.
-   - Updated the login handler to fall back to a Firestore query if the user is not found in local storage (or if they are on a different device).
-   - Once authenticated via Firestore, the account is automatically synced back to the device's local storage for instant offline/speedy future logins.
+2. **Resolved Login Race Condition (Firebase Init Wait)**:
+   - **`main.js`**: Saved the Promise returned by `initFirebase()` as `firebaseInitPromise`.
+   - Updated the login handler to be `async` and to `await firebaseInitPromise` before checking the Firestore database if a local storage lookup fails or if there is a password mismatch.
+   - This ensures that if the page is opened and a user immediately logs in on a clean/cleared browser profile, the login check will wait for Firebase to finish initializing rather than instantly failing with a "credentials do not match" warning.
 
-3. **FormSubmit CAPTCHA Bypass**:
-   - **`main.js`**: Added `_captcha: "false"` to the FormSubmit AJAX JSON request payload. This stops FormSubmit from showing CAPTCHA screens or silently blocking requests.
-
-4. **Redeployment**:
+3. **Redeployment**:
    - Committed changes and pushed to both `main` and `gh-pages` branches.
 
 ## Verification
 
 - **Node Syntax Check**: Confirmed that the script parses successfully.
-- **Git Push Status**: Confirmed remote `main` and `gh-pages` branches are updated to commit `bf3743d`.
+- **Git Push Status**: Confirmed remote `main` and `gh-pages` branches are updated to commit `ac04e18`.
 - **Live URL**: [ZIPP Live Showroom](https://dkssiepdu.github.io/project-platform/)

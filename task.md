@@ -1,6 +1,7 @@
-- [x] Convert emails to lowercase during signup & login to prevent casing mismatch
-- [x] Store passwords in Firestore and add Firestore check fallback during login for cross-device authentication
-- [x] Add `_captcha: "false"` to FormSubmit payload to prevent verification blocking
+- [x] Persist user login state using `localStorage.setItem('zipp_user', ...)` on login and signup success
+- [x] Clear user session from `localStorage` on logout
+- [x] Load persisted user session from `localStorage` on startup in `loadLocalState`
+- [x] Store and await `firebaseInitPromise` in the login handler to eliminate race conditions when Firebase hasn't loaded yet
 - [x] Stage and commit changes
 - [x] Push to `main` and `gh-pages` branches to deploy
 - [x] Verify deployment
