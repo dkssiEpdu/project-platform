@@ -977,28 +977,27 @@ const router = {
                     }
                     
                     const existsLocally = currentSignups.some(u => u && u.email && u.email.toLowerCase() === email && u.pw);
-                    if (existsLocally) {
-                        alert("이미 존재하는 회원입니다.");
-                        return;
-                    }
+                    let existsInFirestore = false;
                     
                     if (db) {
                         try {
                             const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
                             const querySnapshot = await getDocs(collection(db, "signups"));
-                            let existsInFirestore = false;
                             querySnapshot.forEach((doc) => {
                                 const data = doc.data();
                                 if (data.email && data.email.toLowerCase() === email && data.pw) {
                                     existsInFirestore = true;
                                 }
                             });
-                            if (existsInFirestore) {
-                                alert("이미 존재하는 회원입니다.");
-                                return;
-                            }
                         } catch (e) {
                             console.warn("Firestore check failed, checking locally only.", e);
+                        }
+                    }
+
+                    if (existsLocally || existsInFirestore) {
+                        const confirmReset = confirm("이미 존재하는 회원입니다. 입력하신 비밀번호로 재설정하여 재가입하시겠습니까?");
+                        if (!confirmReset) {
+                            return;
                         }
                     }
                     
@@ -1138,13 +1137,17 @@ const router = {
                         console.warn("LocalStorage read failed:", e);
                     }
                     
-                    // Case-insensitive check
-                    const user = currentSignups.find(u => u && u.email && u.email.toLowerCase() === email);
+                    // Check both email and password matching
+                    const user = currentSignups.find(u => u && u.email && u.email.toLowerCase() === email && u.pw === pw);
                     
-                    if (user && user.pw === pw) {
+                    if (user) {
                         state.user = { name: user.name, id: 'user_' + Date.now() };
                         try {
                             localStorage.setItem('zipp_user', JSON.stringify(state.user));
+                            // Clean up duplicates and keep the active user record clean
+                            let cleanedSignups = currentSignups.filter(u => !u || !u.email || u.email.toLowerCase() !== email);
+                            cleanedSignups.push(user);
+                            localStorage.setItem('zipp_signups', JSON.stringify(cleanedSignups));
                         } catch (e) {
                             console.warn("Failed to save user session:", e);
                         }
