@@ -224,7 +224,8 @@ class GyeolNav extends HTMLElement {
     render() {
         const isGuest = state.user.name === '디렉터 게스트';
         const userBtnHtml = isGuest 
-            ? `<button class="nav-btn ${state.currentView === 'signup' ? 'active' : ''}" data-view="signup">회원가입</button>`
+            ? `<button class="nav-btn ${state.currentView === 'login' ? 'active' : ''}" data-view="login">로그인</button>
+               <button class="nav-btn ${state.currentView === 'signup' ? 'active' : ''}" data-view="signup">회원가입</button>`
             : `<button class="util-btn" id="logout-btn" style="border-color:var(--accent-gold);color:var(--accent-gold);margin-left:4px;"><i class="fas fa-user"></i> <span>${state.user.name}</span></button>`;
 
         this.innerHTML = `
@@ -952,6 +953,7 @@ const router = {
                 const signupData = {
                     name,
                     email,
+                    pw, // save password locally for login verification
                     timestamp: new Date().toLocaleString('ko-KR')
                 };
                 
@@ -992,8 +994,71 @@ const router = {
                 
                 // Log in user locally
                 state.user = { name: name, id: 'user_' + Date.now() };
-                alert("회원가입이 완료되었습니다!");
-                router.navigate('home');
+                router.navigate('signupSuccess');
+            };
+        },
+        
+        signupSuccess: () => {
+            const container = document.getElementById('view-container');
+            container.innerHTML = `
+                <div class="fade-in" style="max-width:480px;margin:80px auto;text-align:center;">
+                    <div class="card" style="padding:48px 32px;">
+                        <div style="font-size:3.5rem;color:var(--accent-gold);margin-bottom:20px;"><i class="fas fa-circle-check"></i></div>
+                        <h2 style="font-family:var(--font-serif);font-size:2.2rem;font-weight:300;margin-bottom:12px;">가입 완료!</h2>
+                        <p style="font-size:0.88rem;color:var(--text-muted);line-height:1.6;margin-bottom:32px;">
+                            ZIPP 아카이브 회원가입을 축하합니다.<br>
+                            이제 디자이너 브랜드 컬렉션을 마음껏 아카이빙해 보세요.
+                        </p>
+                        <button class="btn btn-primary" onclick="router.navigate('home')" style="width:100%;justify-content:center;">쇼룸 바로가기</button>
+                    </div>
+                </div>
+            `;
+        },
+
+        login: () => {
+            const container = document.getElementById('view-container');
+            container.innerHTML = `
+                <div class="fade-in" style="max-width:480px;margin:80px auto;">
+                    <div style="text-align:center;margin-bottom:32px;">
+                        <h2 class="page-title" style="font-family:var(--font-serif);font-size:2.2rem;font-weight:300;">Sign <em>In</em></h2>
+                        <p style="font-size:0.84rem;color:var(--text-muted);margin-top:8px;">ZIPP 아카이브에 로그인하고 회원 서비스를 이용하세요.</p>
+                    </div>
+                    <div class="card" style="padding:32px;">
+                        <div style="margin-bottom:16px;">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="login-email" class="input-field" placeholder="example@email.com">
+                        </div>
+                        <div style="margin-bottom:24px;">
+                            <label class="form-label">Password</label>
+                            <input type="password" id="login-pw" class="input-field" placeholder="비밀번호를 입력하세요">
+                        </div>
+                        <button class="btn btn-primary" id="btn-submit-login" style="width:100%;justify-content:center;">로그인</button>
+                        <div style="text-align:center;margin-top:20px;font-size:0.8rem;color:var(--text-muted);">
+                            아직 회원이 아니신가요? <span style="text-decoration:underline;cursor:pointer;color:var(--text-main);" onclick="router.navigate('signup')">회원가입</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('btn-submit-login').onclick = () => {
+                const email = document.getElementById('login-email').value.trim();
+                const pw = document.getElementById('login-pw').value.trim();
+                
+                if (!email || !pw) {
+                    alert("이메일과 비밀번호를 모두 입력해 주세요.");
+                    return;
+                }
+                
+                const currentSignups = JSON.parse(localStorage.getItem('zipp_signups') || '[]');
+                const user = currentSignups.find(u => u.email === email);
+                
+                if (user && user.pw === pw) {
+                    state.user = { name: user.name, id: 'user_' + Date.now() };
+                    alert(`${user.name}님, 환영합니다!`);
+                    router.navigate('home');
+                } else {
+                    alert("이메일 또는 비밀번호가 일치하지 않습니다.");
+                }
             };
         }
     },
