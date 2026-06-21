@@ -1,0 +1,6 @@
+- [x] Make Name optional & default to email prefix in `main.js`
+- [x] Wrap signup & login handlers in robust try-catch blocks in `main.js`
+- [x] Expose `router` object globally as `window.router` in `main.js`
+- [x] Stage and commit changes
+- [x] Push to `main` and `gh-pages` branches to deploy
+- [x] Verify deployment
