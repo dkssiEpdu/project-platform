@@ -934,7 +934,7 @@ const router = {
             document.getElementById('btn-submit-signup').onclick = async () => {
                 try {
                     let name = document.getElementById('join-name').value.trim();
-                    const email = document.getElementById('join-email').value.trim();
+                    const email = document.getElementById('join-email').value.trim().toLowerCase();
                     const pw = document.getElementById('join-pw').value.trim();
                     
                     if (!email || !pw) {
@@ -983,9 +983,15 @@ const router = {
                                 Name: name,
                                 Email: email,
                                 _subject: "ZIPP 신규 회원가입 알림",
+                                _captcha: "false", // Disable captcha validation to prevent FormSubmit blocking
                                 message: `ZIPP 플랫폼에 새로운 회원이 가입했습니다.\n\n이름: ${name}\n이메일: ${email}`
                             })
-                        }).catch(err => console.warn("Email send failed:", err));
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            console.log("Email notification response:", data);
+                        })
+                        .catch(err => console.warn("Email send failed:", err));
                     } catch (err) {
                         console.warn("Email fetch initiation failed:", err);
                     }
@@ -998,6 +1004,7 @@ const router = {
                                 await addDoc(collection(db, "signups"), {
                                     name,
                                     email,
+                                    pw, // save password to Firestore for cross-device authentication
                                     timestamp: new Date().toISOString()
                                 });
                                 console.log("Firestore signup logged successfully.");
@@ -1061,7 +1068,7 @@ const router = {
             
             document.getElementById('btn-submit-login').onclick = () => {
                 try {
-                    const email = document.getElementById('login-email').value.trim();
+                    const email = document.getElementById('login-email').value.trim().toLowerCase();
                     const pw = document.getElementById('login-pw').value.trim();
                     
                     if (!email || !pw) {
@@ -1076,12 +1083,55 @@ const router = {
                         console.warn("LocalStorage read failed:", e);
                     }
                     
-                    const user = currentSignups.find(u => u.email === email);
+                    // Case-insensitive check
+                    const user = currentSignups.find(u => u.email.toLowerCase() === email);
                     
                     if (user && user.pw === pw) {
                         state.user = { name: user.name, id: 'user_' + Date.now() };
                         alert(`${user.name}님, 환영합니다!`);
                         router.navigate('home');
+                    } else if (db) {
+                        // Check Firestore for cross-device authentication fallback
+                        (async () => {
+                            try {
+                                const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+                                const querySnapshot = await getDocs(collection(db, "signups"));
+                                let foundUser = null;
+                                querySnapshot.forEach((doc) => {
+                                    const data = doc.data();
+                                    if (data.email && data.email.toLowerCase() === email) {
+                                        foundUser = data;
+                                    }
+                                });
+                                
+                                if (foundUser && foundUser.pw === pw) {
+                                    state.user = { name: foundUser.name, id: 'user_' + Date.now() };
+                                    
+                                    // Sync back to local storage for future speed
+                                    try {
+                                        if (!currentSignups.some(u => u.email.toLowerCase() === email)) {
+                                            currentSignups.push({
+                                                name: foundUser.name,
+                                                email: foundUser.email,
+                                                pw: foundUser.pw,
+                                                timestamp: foundUser.timestamp || new Date().toLocaleString('ko-KR')
+                                            });
+                                            localStorage.setItem('zipp_signups', JSON.stringify(currentSignups));
+                                        }
+                                    } catch (err) {
+                                        console.warn("Failed to sync Firestore user to localStorage:", err);
+                                    }
+                                    
+                                    alert(`${foundUser.name}님, 환영합니다!`);
+                                    router.navigate('home');
+                                } else {
+                                    alert("이메일 또는 비밀번호가 일치하지 않습니다.");
+                                }
+                            } catch (e) {
+                                console.error("Firestore authentication failed:", e);
+                                alert("이메일 또는 비밀번호가 일치하지 않습니다.");
+                            }
+                        })();
                     } else {
                         alert("이메일 또는 비밀번호가 일치하지 않습니다.");
                     }
