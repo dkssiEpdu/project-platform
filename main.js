@@ -901,6 +901,7 @@ const router = {
                         `).join('')}
                     </div>
                 </div>
+            `;
         },
         
         signup: () => {
@@ -1000,10 +1001,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load local storage fallback
     loadLocalState();
     
-    // Init Firebase
-    await initFirebase();
-    
-    // Initial Route navigation
+    // Initial Route navigation (render immediately)
     router.navigate('home');
     
     const logoBtn = document.getElementById('logo-btn');
@@ -1011,4 +1009,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         logoBtn.onclick = () => router.navigate('home');
     }
     
+    // Init Firebase in the background
+    initFirebase().catch(e => console.warn("Firebase bg initialization failed:", e));
 });
