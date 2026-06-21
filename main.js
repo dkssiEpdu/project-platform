@@ -223,22 +223,22 @@ class GyeolNav extends HTMLElement {
     }
     render() {
         const themeIcon = state.theme === 'dark' ? 'fa-sun' : 'fa-moon';
-        const themeText = state.theme === 'dark' ? 'Ivory Mode' : 'Charcoal Mode';
+        const themeLabel = state.theme === 'dark' ? 'Light' : 'Dark';
         
         this.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 2px; flex-wrap: wrap;">
                 <button class="nav-btn ${state.currentView === 'home' ? 'active' : ''}" data-view="home">${t('showroom')}</button>
                 <button class="nav-btn ${state.currentView === 'uploader' ? 'active' : ''}" data-view="uploader">${t('uploader')}</button>
                 <button class="nav-btn ${state.currentView === 'lookbook' ? 'active' : ''}" data-view="lookbook">${t('lookbook')}</button>
                 <button class="nav-btn ${state.currentView === 'fabrics' ? 'active' : ''}" data-view="fabrics">${t('fabrics')}</button>
                 <button class="nav-btn ${state.currentView === 'matcher' ? 'active' : ''}" data-view="matcher">${t('matcher')}</button>
                 
-                <button class="lang-btn" id="theme-toggle" style="margin-left: 12px; font-family: var(--font-sans); font-size: 0.8rem; font-weight: 600;">
-                    <i class="fas ${themeIcon}"></i> <span>${themeText}</span>
+                <button class="util-btn" id="theme-toggle">
+                    <i class="fas ${themeIcon}"></i> <span>${themeLabel}</span>
                 </button>
                 
-                <button class="lang-btn" id="lang-toggle" style="font-family: var(--font-sans); font-size: 0.8rem; font-weight: 600;">
-                    <i class="fas fa-globe"></i> <span style="text-transform: uppercase;">${state.currentLanguage}</span>
+                <button class="util-btn" id="lang-toggle">
+                    <i class="fas fa-globe"></i> <span>${state.currentLanguage.toUpperCase()}</span>
                 </button>
             </div>
         `;
@@ -249,11 +249,7 @@ class GyeolNav extends HTMLElement {
 
         this.querySelector('#theme-toggle').onclick = () => {
             state.theme = state.theme === 'dark' ? 'light' : 'dark';
-            if (state.theme === 'light') {
-                document.body.classList.remove('dark-theme');
-            } else {
-                document.body.classList.add('dark-theme');
-            }
+            document.body.classList.toggle('dark-theme', state.theme === 'dark');
             this.render();
         };
 
@@ -273,23 +269,30 @@ class GyeolProductCard extends HTMLElement {
     }
     render() {
         const d = this._data;
+        const colorDots = d.colors.map(c =>
+            `<span class="color-dot-sm" style="background:${c};"></span>`
+        ).join('');
         this.innerHTML = `
-            <div class="card fade-in" style="cursor: pointer;">
+            <div class="product-card-wrap">
                 <div class="product-image-container">
+                    <span class="product-mood-badge">${d.mood}</span>
                     <img src="${d.image}" alt="${d.name}" class="product-image" loading="lazy">
+                    <div class="product-hover-cta">
+                        <span class="cta-line">VIEW DETAIL</span>
+                    </div>
                 </div>
                 <div class="product-info">
                     <div class="product-brand">${d.brand}</div>
                     <h3 class="product-title">${d.name}</h3>
                     <div class="product-footer">
                         <span class="product-price">${formatKRW(d.price)}</span>
-                        <span class="product-badge">${d.mood}</span>
+                        <div class="product-colors">${colorDots}</div>
                     </div>
                 </div>
             </div>
         `;
         
-        this.querySelector('.card').onclick = () => {
+        this.querySelector('.product-card-wrap').onclick = () => {
             openProductDetail(d.id);
         };
     }
@@ -307,19 +310,22 @@ class GyeolChatbot extends HTMLElement {
             <div class="chatbot-container">
                 <div class="chatbot-window" id="chatbot-window">
                     <div class="chatbot-header">
-                        <span>결 (GYEOL) AI Assistant</span>
-                        <button id="close-chat" style="background: none; border: none; color: var(--text-main); cursor: pointer; font-size: 1.1rem;"><i class="fas fa-times"></i></button>
+                        <div>
+                            <div class="chatbot-header-title">결 Guide</div>
+                            <div class="chatbot-header-sub">Archive AI · Always here</div>
+                        </div>
+                        <button id="close-chat" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;padding:4px;"><i class="fas fa-times"></i></button>
                     </div>
                     <div class="chatbot-messages" id="chatbot-messages">
                         <div class="chat-msg bot">${t('botIntro')}</div>
                     </div>
                     <div class="chatbot-input-area">
                         <input type="text" class="chatbot-input" id="chatbot-input" placeholder="${t('chatPlaceholder')}">
-                        <button class="chatbot-send" id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+                        <button class="chatbot-send" id="chatbot-send"><i class="fas fa-arrow-up"></i></button>
                     </div>
                 </div>
                 <button class="chatbot-btn" id="chatbot-toggle">
-                    <i class="fas fa-comment-dots"></i>
+                    <i class="fas fa-sparkles"></i>
                 </button>
             </div>
         `;
@@ -385,62 +391,76 @@ function openProductDetail(productId) {
     
     const fabric = state.fabrics[product.fabricIdx];
     
+    const starsHtml = (r) => '★'.repeat(r) + '<span style="opacity:0.25">★</span>'.repeat(5 - r);
     panel.innerHTML = `
         <div class="detail-slider-header">
-            <h2 style="font-size: 1.35rem; font-family: var(--font-serif); margin: 0;">Product Details</h2>
-            <button id="close-detail-panel" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text-main);"><i class="fas fa-times"></i></button>
+            <div>
+                <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-ghost);margin-bottom:4px;">Product Detail</div>
+                <div style="font-family:var(--font-serif);font-size:1rem;font-weight:600;">${product.brand}</div>
+            </div>
+            <button class="detail-close-btn" id="close-detail-panel"><i class="fas fa-times"></i></button>
         </div>
         
         <div class="detail-slider-content">
-            <div style="aspect-ratio: 3/4; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border);">
-                <img src="${product.image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;">
+            <!-- Image -->
+            <div style="aspect-ratio:3/4;border-radius:var(--r-md);overflow:hidden;margin-bottom:24px;position:relative;">
+                <img src="${product.image}" alt="${product.name}" style="width:100%;height:100%;object-fit:cover;">
+                <div style="position:absolute;top:14px;left:14px;background:rgba(255,255,255,0.9);backdrop-filter:blur(8px);padding:4px 12px;border-radius:40px;font-size:0.62rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-main);">${product.category}</div>
             </div>
             
-            <div style="text-transform: uppercase; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px;">${product.brand}</div>
-            <h1 style="font-size: 1.8rem; font-family: var(--font-serif); margin-bottom: 12px; line-height: 1.25;">${product.name}</h1>
-            
-            <div style="font-size: 1.4rem; font-weight: 700; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
-                ${formatKRW(product.price)}
+            <!-- Title Block -->
+            <h1 style="font-size:1.9rem;font-family:var(--font-serif);font-weight:300;line-height:1.2;margin-bottom:8px;">${product.name}</h1>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);">
+                <span style="font-size:1.55rem;font-weight:700;letter-spacing:-0.02em;">${formatKRW(product.price)}</span>
+                <span style="font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-ghost);border:1px solid var(--border);padding:5px 12px;border-radius:40px;">${product.mood}</span>
             </div>
-            
-            <div style="margin-bottom: 20px;">
-                <label style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">Size Selector</label>
+
+            <!-- Size -->
+            <div style="margin-bottom:22px;">
+                <div class="section-eyebrow">Size</div>
                 <div class="size-selector">
                     ${product.sizes.map((s, idx) => `<button class="size-btn ${idx === 0 ? 'active' : ''}">${s}</button>`).join('')}
                 </div>
             </div>
             
-            <div style="margin-bottom: 24px;">
-                <label style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted);">Color Palette</label>
-                <div style="display: flex; gap: 8px; margin-top: 8px;">
-                    ${product.colors.map(c => `<span class="color-dot" style="background: ${c};"></span>`).join('')}
+            <!-- Colors -->
+            <div style="margin-bottom:24px;">
+                <div class="section-eyebrow">Color Palette</div>
+                <div style="display:flex;gap:10px;margin-top:4px;">
+                    ${product.colors.map(c => `<span class="color-dot" style="background:${c};width:28px;height:28px;"></span>`).join('')}
                 </div>
             </div>
             
-            <div class="card" style="margin-bottom: 24px; background: var(--bg-elevated); border: none; padding: 16px;">
-                <h4 style="font-family: var(--font-serif); font-style: italic; margin-bottom: 8px;">Fabric: ${fabric.name} (${fabric.weight})</h4>
-                <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">${product.desc}</p>
+            <!-- Fabric Info -->
+            <div style="background:var(--bg-elevated);border-radius:var(--r-sm);padding:18px;margin-bottom:24px;">
+                <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-ghost);margin-bottom:8px;">Fabric · ${fabric.weight}</div>
+                <div style="font-family:var(--font-serif);font-size:1.05rem;font-style:italic;margin-bottom:8px;">${fabric.name}</div>
+                <p style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;">${product.desc}</p>
             </div>
+
+            <!-- CTA -->
+            <button class="btn btn-primary" style="width:100%;padding:15px;font-size:0.8rem;border-radius:var(--r-sm);margin-bottom:28px;">
+                <i class="fas fa-bag-shopping"></i>&nbsp;&nbsp;장바구니 담기
+            </button>
             
-            <!-- Reviews Section -->
-            <div style="margin-bottom: 24px; border-top: 1px solid var(--border); padding-top: 20px;">
-                <h3 style="font-size: 1.15rem; font-family: var(--font-serif); margin-bottom: 12px;">Customer Review (${product.reviews.length})</h3>
-                <div id="detail-reviews-list" style="display: grid; gap: 12px; margin-bottom: 16px;">
-                    ${product.reviews.length === 0 ? '<p style="font-size: 0.85rem; color: var(--text-muted);">첫 리뷰를 남겨주세요.</p>' : product.reviews.map(r => `
+            <!-- Reviews -->
+            <div>
+                <div class="section-eyebrow">Reviews (${product.reviews.length})</div>
+                <div id="detail-reviews-list" style="margin-bottom:16px;">
+                    ${product.reviews.length === 0
+                        ? '<p style="font-size:0.84rem;color:var(--text-ghost);padding:12px 0;">첫 번째 리뷰를 남겨보세요.</p>'
+                        : product.reviews.map(r => `
                         <div class="review-item">
-                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
-                                <strong>@${r.author}</strong>
-                                <span style="color: var(--primary);">★ ${r.rating}</span>
+                            <div class="review-header">
+                                <span class="review-author">@${r.author}</span>
+                                <span class="review-rating" style="font-size:0.75rem;">${starsHtml(r.rating)}</span>
                             </div>
-                            <p style="font-size: 0.88rem; color: var(--text-muted);">${r.text}</p>
-                        </div>
-                    `).join('')}
+                            <p class="review-text">${r.text}</p>
+                        </div>`).join('')}
                 </div>
-                
-                <!-- Add Review Form -->
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" placeholder="리뷰 코멘트를 입력하세요..." class="input-field" id="new-review-text" style="padding: 8px 12px; font-size: 0.85rem;">
-                    <button class="btn btn-primary" id="submit-review-btn" style="padding: 8px 16px; font-size: 0.8rem;">등록</button>
+                <div style="display:flex;gap:8px;">
+                    <input type="text" placeholder="리뷰를 남겨주세요..." class="input-field" id="new-review-text" style="font-size:0.84rem;">
+                    <button class="btn btn-primary" id="submit-review-btn" style="padding:10px 18px;font-size:0.74rem;white-space:nowrap;">등록</button>
                 </div>
             </div>
         </div>
@@ -489,28 +509,32 @@ const router = {
     views: {
         home: () => {
             const container = document.getElementById('view-container');
+            const totalCount = state.products.length;
             
-            // Layout skeleton
             container.innerHTML = `
                 <div class="fade-in">
-                    <!-- Brand Slogan Hero -->
-                    <div style="padding: 32px 0 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 24px;">
-                        <h2 style="font-family: var(--font-serif); font-size: 2.8rem; margin: 0; line-height: 1.15; font-weight: 700;">결 (GYEOL)</h2>
-                        <p style="font-size: 1rem; color: var(--text-muted); margin-top: 8px; font-family: var(--font-sans); font-weight: 300;">독립 디자이너 브랜드의 고유한 결을 기록하는 제품 아카이브 스토어.</p>
+                    <!-- Magazine Hero -->
+                    <div class="home-hero">
+                        <div>
+                            <div class="hero-eyebrow">독립 브랜드 아카이브 · Seongsu Edition</div>
+                            <h2 class="hero-title">결<em>(GYEOL)</em><br>Archive Store</h2>
+                            <p class="hero-desc">독립 디자이너 브랜드의 고유한 결을 — 원단의 질감, 실루엣의 흐름, 브랜드 미학 — 기록하는 제품 쇼룸.</p>
+                        </div>
+                        <div class="hero-meta">
+                            <div class="hero-count">${String(totalCount).padStart(2, '0')}</div>
+                            <div class="hero-count-label">Products</div>
+                        </div>
                     </div>
                     
-                    <!-- Filters (Category and Mood) -->
+                    <!-- Filters -->
                     <div class="filter-section">
-                        <!-- Category Filter Row -->
                         <div class="filter-row">
                             <span class="filter-label">Category</span>
                             <button class="filter-chip ${state.activeFilters.category === 'All' ? 'active' : ''}" data-cat="All">${t('all')}</button>
                             <button class="filter-chip ${state.activeFilters.category === 'Outer' ? 'active' : ''}" data-cat="Outer">Outer</button>
-                            <button class="filter-chip ${state.activeFilters.category === 'Tops' ? 'active' : ''}" data-cat="Tops">Tops/Knit</button>
+                            <button class="filter-chip ${state.activeFilters.category === 'Tops' ? 'active' : ''}" data-cat="Tops">Tops / Knit</button>
                             <button class="filter-chip ${state.activeFilters.category === 'Pants' ? 'active' : ''}" data-cat="Pants">Pants</button>
                         </div>
-                        
-                        <!-- Mood Filter Row -->
                         <div class="filter-row">
                             <span class="filter-label">Mood</span>
                             <button class="filter-chip ${state.activeFilters.mood === 'All' ? 'active' : ''}" data-mood="All">${t('all')}</button>
@@ -521,27 +545,18 @@ const router = {
                         </div>
                     </div>
                     
-                    <!-- Products Display Grid -->
+                    <!-- Products Grid -->
                     <div class="product-grid" id="showroom-products-grid"></div>
                 </div>
             `;
             
-            // Set filter chips click events
             container.querySelectorAll('[data-cat]').forEach(chip => {
-                chip.onclick = () => {
-                    state.activeFilters.category = chip.dataset.cat;
-                    router.views.home(); // Re-render view
-                };
+                chip.onclick = () => { state.activeFilters.category = chip.dataset.cat; router.views.home(); };
             });
-            
             container.querySelectorAll('[data-mood]').forEach(chip => {
-                chip.onclick = () => {
-                    state.activeFilters.mood = chip.dataset.mood;
-                    router.views.home(); // Re-render view
-                };
+                chip.onclick = () => { state.activeFilters.mood = chip.dataset.mood; router.views.home(); };
             });
 
-            // Filter and render products
             const grid = document.getElementById('showroom-products-grid');
             const filtered = state.products.filter(p => {
                 const matchCat = state.activeFilters.category === 'All' || p.category === state.activeFilters.category;
@@ -550,7 +565,7 @@ const router = {
             });
             
             if (filtered.length === 0) {
-                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 48px; color: var(--text-muted); font-size: 0.95rem;">검색 필터에 일치하는 브랜드 상품이 없습니다.</div>`;
+                grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-box-open"></i></div><p>검색 필터에 일치하는 상품이 없습니다.</p></div>`;
             } else {
                 filtered.forEach(p => {
                     const card = document.createElement('gyeol-product-card');
@@ -563,68 +578,76 @@ const router = {
         uploader: () => {
             const container = document.getElementById('view-container');
             container.innerHTML = `
-                <div class="card fade-in" style="max-width: 800px; margin: 0 auto; padding: 32px;">
-                    <h2 style="font-family: var(--font-serif); font-size: 2rem; text-align: center; margin-bottom: 8px;">Brand Product Uploader</h2>
-                    <p style="text-align: center; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 32px;">의류 브랜드 디렉터가 새 제품을 등록하는 공간입니다. 무신사 형식의 스펙 시트가 빌드됩니다.</p>
-                    
-                    <div class="uploader-form-grid" style="margin-bottom: 24px;">
-                        <div>
-                            <label style="display: block; font-size: 0.85rem; margin-bottom: 6px; font-weight: 600;">브랜드 이름 (Brand Name)</label>
-                            <input type="text" id="up-brand" class="input-field" placeholder="예: 오디티 (ODDITY)" value="결 (GYEOL)">
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 0.85rem; margin-bottom: 6px; font-weight: 600;">제품 이름 (Product Title)</label>
-                            <input type="text" id="up-name" class="input-field" placeholder="예: 테일러 아우터 자켓">
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 0.85rem; margin-bottom: 6px; font-weight: 600;">카테고리</label>
-                            <select id="up-category" class="select-field">
-                                <option value="Outer">Outer (아우터)</option>
-                                <option value="Tops">Tops/Knit (상의)</option>
-                                <option value="Pants">Pants (하의)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 0.85rem; margin-bottom: 6px; font-weight: 600;">판매가격 (Price in KRW)</label>
-                            <input type="number" id="up-price" class="input-field" placeholder="예: 89000">
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 0.85rem; margin-bottom: 6px; font-weight: 600;">브랜드 지향 무드</label>
-                            <select id="up-mood" class="select-field">
-                                <option value="Minimal">Minimal</option>
-                                <option value="Street">Street</option>
-                                <option value="Avant-Garde">Avant-Garde</option>
-                                <option value="Silent Luxury">Silent Luxury</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label style="display: block; font-size: 0.85rem; margin-bottom: 6px; font-weight: 600;">주요 원단 매칭</label>
-                            <select id="up-fabric" class="select-field">
-                                ${state.fabrics.map((f, idx) => `<option value="${idx}">${f.name} (${f.weight})</option>`).join('')}
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-bottom: 24px;">
-                        <label style="display: block; font-size: 0.85rem; margin-bottom: 6px; font-weight: 600;">디자인 감성 및 설명</label>
-                        <textarea id="up-desc" class="textarea-field" placeholder="제품 실루엣과 촉감(결)에 어울리는 감각 설명을 적어주세요." rows="3"></textarea>
+                <div class="fade-in" style="max-width:860px;margin:0 auto;">
+                    <!-- Page Header -->
+                    <div style="padding:56px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px;">
+                        <div class="hero-eyebrow">Brand Portal · Admin</div>
+                        <h2 class="page-title">Product <em>Uploader</em></h2>
+                        <p style="font-size:0.88rem;color:var(--text-muted);max-width:440px;line-height:1.7;font-weight:300;">독립 브랜드 디렉터 전용 제품 등록 포털. 아카이브 쇼룸에 새 컬렉션을 런칭하세요.</p>
                     </div>
 
-                    <div style="margin-bottom: 32px;">
-                        <label style="display: block; font-size: 0.85rem; margin-bottom: 12px; font-weight: 600;">제품 룩북 피사체 프리셋 선택</label>
-                        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;">
-                            ${state.mockupImages.map((img, idx) => `
-                                <div class="fabric-card ${idx === 0 ? 'selected' : ''}" data-preset-idx="${idx}" style="padding: 6px; cursor: pointer; border: 1px solid var(--border);">
-                                    <div style="aspect-ratio: 1; border-radius: 4px; overflow: hidden; background: url('${img.url}') center/cover no-repeat; margin-bottom: 6px;"></div>
-                                    <div style="font-size: 0.65rem; text-align: center; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; font-weight: 500;">${img.name}</div>
-                                </div>
-                            `).join('')}
+                    <div class="card" style="padding:36px;">
+                        <div class="uploader-form-grid" style="margin-bottom:24px;">
+                            <div>
+                                <label class="form-label">Brand Name</label>
+                                <input type="text" id="up-brand" class="input-field" placeholder="예: 오디티 (ODDITY)" value="결 (GYEOL)">
+                            </div>
+                            <div>
+                                <label class="form-label">Product Title</label>
+                                <input type="text" id="up-name" class="input-field" placeholder="예: 테일러 아우터 자켓">
+                            </div>
+                            <div>
+                                <label class="form-label">Category</label>
+                                <select id="up-category" class="select-field">
+                                    <option value="Outer">Outer (아우터)</option>
+                                    <option value="Tops">Tops / Knit (상의)</option>
+                                    <option value="Pants">Pants (하의)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Price (KRW)</label>
+                                <input type="number" id="up-price" class="input-field" placeholder="예: 89000">
+                            </div>
+                            <div>
+                                <label class="form-label">Brand Mood</label>
+                                <select id="up-mood" class="select-field">
+                                    <option value="Minimal">Minimal</option>
+                                    <option value="Street">Street</option>
+                                    <option value="Avant-Garde">Avant-Garde</option>
+                                    <option value="Silent Luxury">Silent Luxury</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Fabric Match</label>
+                                <select id="up-fabric" class="select-field">
+                                    ${state.fabrics.map((f, idx) => `<option value="${idx}">${f.name} (${f.weight})</option>`).join('')}
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div style="display: flex; gap: 12px; justify-content: flex-end;">
-                        <button class="btn btn-secondary" onclick="router.navigate('home')">취소</button>
-                        <button class="btn btn-primary" id="btn-submit-product" style="background: var(--text-main); color: var(--bg-main);">${t('submitBtn')}</button>
+                        
+                        <div style="margin-bottom:24px;">
+                            <label class="form-label">Design Description</label>
+                            <textarea id="up-desc" class="textarea-field" placeholder="제품 실루엣과 촉감(결)에 어울리는 감각적인 설명을 적어주세요." rows="3"></textarea>
+                        </div>
+
+                        <div style="margin-bottom:32px;">
+                            <label class="form-label" style="margin-bottom:14px;">Lookbook Preset Image</label>
+                            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;">
+                                ${state.mockupImages.map((img, idx) => `
+                                    <div class="fabric-card ${idx === 0 ? 'selected' : ''}" data-preset-idx="${idx}">
+                                        <div class="fabric-swatch" style="height:80px;background:url('${img.url}') center/cover no-repeat;"></div>
+                                        <div class="fabric-body" style="padding:8px;">
+                                            <div style="font-size:0.62rem;font-weight:600;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;color:var(--text-muted);">${img.name}</div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div style="display:flex;gap:12px;justify-content:flex-end;">
+                            <button class="btn btn-secondary" onclick="router.navigate('home')">취소</button>
+                            <button class="btn btn-primary" id="btn-submit-product">${t('submitBtn')}</button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -683,21 +706,23 @@ const router = {
             const container = document.getElementById('view-container');
             container.innerHTML = `
                 <div class="fade-in">
-                    <div style="border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px;">
-                        <h2 style="font-family: var(--font-serif); font-size: 2.2rem; margin: 0;">Style Lookbook & Lounge</h2>
-                        <p style="font-size: 0.95rem; color: var(--text-muted); margin-top: 4px;">브랜드 디렉터와 성수 피플들의 코디네이션 스타일 아카이브 스냅 피드입니다.</p>
+                    <div style="padding:56px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px;">
+                        <div class="hero-eyebrow">Community Feed · Style Archive</div>
+                        <h2 class="page-title">Style <em>Lookbook</em></h2>
+                        <p style="font-size:0.88rem;color:var(--text-muted);max-width:440px;line-height:1.7;font-weight:300;">브랜드 디렉터와 성수 피플들의 코디네이션 스타일 아카이브 스냅 피드.</p>
                     </div>
-                    
-                    <div class="card" style="padding: 20px; margin-bottom: 28px;">
-                        <h3 style="font-family: var(--font-serif); font-size: 1.15rem; margin-bottom: 12px;">새 스냅 피드 올리기</h3>
-                        <textarea id="snap-desc-input" class="textarea-field" placeholder="착용 브랜드명과 오늘 연출한 룩북의 미학적 디테일을 설명해보세요." rows="2" style="margin-bottom: 12px;"></textarea>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <select id="snap-image-select" class="select-field" style="width: auto; padding: 6px 12px; font-size: 0.85rem;">
+
+                    <!-- Submit snap -->
+                    <div class="card" style="padding:24px;margin-bottom:36px;">
+                        <div class="section-eyebrow">새 스냅 올리기</div>
+                        <textarea id="snap-desc-input" class="textarea-field" placeholder="착용 브랜드명과 오늘 연출한 룩북의 미학적 디테일을 설명해보세요." rows="2" style="margin-bottom:14px;"></textarea>
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                            <select id="snap-image-select" class="select-field" style="flex:1;min-width:200px;">
                                 <option value="https://images.unsplash.com/photo-1544441893-675973e31985?w=600">오버코트 스타일링 포토</option>
                                 <option value="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600">포멀 슈트 디렉션 포토</option>
                                 <option value="https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=600">린넨 가디건 내추럴 포토</option>
                             </select>
-                            <button class="btn btn-primary" id="btn-submit-snap" style="padding: 8px 20px; font-size: 0.85rem;">룩북 스냅 등재</button>
+                            <button class="btn btn-primary" id="btn-submit-snap"><i class="fas fa-plus"></i>&nbsp; 스냅 등재</button>
                         </div>
                     </div>
                     
@@ -708,60 +733,52 @@ const router = {
             const list = document.getElementById('lookbook-photos-grid');
             state.lookbooks.forEach(look => {
                 const card = document.createElement('div');
-                card.className = 'lookbook-card fade-in';
+                card.className = 'lookbook-card';
                 
                 card.innerHTML = `
-                    <img src="${look.image}" alt="${look.brand}" class="lookbook-image" loading="lazy">
+                    <div class="lookbook-image-wrap">
+                        <img src="${look.image}" alt="${look.brand}" class="lookbook-image" loading="lazy">
+                    </div>
                     <div class="lookbook-footer">
-                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">
-                            <span>${look.brand}</span>
-                            <span>@${look.author}</span>
+                        <div class="lookbook-meta">
+                            <span class="lookbook-author">${look.brand}</span>
+                            <span class="lookbook-likes"><i class="fas fa-heart" style="font-size:0.7rem;"></i> ${look.likes}</span>
                         </div>
-                        <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-main); margin-bottom: 12px;">"${look.description}"</p>
-                        
-                        <!-- Reply / comments loop -->
-                        <div style="border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px; font-size: 0.8rem; display: grid; gap: 4px;">
-                            ${look.comments.map(c => `<div><strong>@${c.author}:</strong> <span style="color: var(--text-muted);">${c.text}</span></div>`).join('')}
-                        </div>
-                        
-                        <div style="display: flex; gap: 8px; margin-top: 12px;">
-                            <input type="text" placeholder="댓글..." class="input-field comment-input-box" style="padding: 4px 10px; font-size: 0.8rem;">
-                            <button class="btn btn-secondary comment-submit-btn" style="padding: 4px 12px; font-size: 0.8rem;">입력</button>
+                        <div style="font-size:0.7rem;color:var(--text-ghost);margin-bottom:8px;">@${look.author}</div>
+                        <p class="lookbook-desc">"${look.description}"</p>
+                        ${look.comments.length > 0 ? `
+                        <div style="border-top:1px solid var(--border);padding-top:10px;margin-top:10px;display:grid;gap:5px;">
+                            ${look.comments.map(c => `
+                            <div style="font-size:0.78rem;">
+                                <span style="font-weight:700;color:var(--text-main);">@${c.author}</span>
+                                <span style="color:var(--text-muted);margin-left:4px;">${c.text}</span>
+                            </div>`).join('')}
+                        </div>` : ''}
+                        <div style="display:flex;gap:8px;margin-top:12px;">
+                            <input type="text" placeholder="댓글 남기기..." class="input-field comment-input-box" style="font-size:0.8rem;padding:8px 12px;">
+                            <button class="btn btn-secondary comment-submit-btn" style="padding:8px 14px;font-size:0.74rem;">입력</button>
                         </div>
                     </div>
                 `;
                 
-                const replyIn = card.querySelector('.comment-input-box');
-                const replyBtn = card.querySelector('.comment-submit-btn');
-                
-                replyBtn.onclick = () => {
-                    const txt = replyIn.value.trim();
+                card.querySelector('.comment-submit-btn').onclick = () => {
+                    const inp = card.querySelector('.comment-input-box');
+                    const txt = inp.value.trim();
                     if (txt) {
                         look.comments.push({ author: state.user.name, text: txt });
                         saveLocalState();
-                        router.views.lookbook(); // refresh lookbook view
+                        router.views.lookbook();
                     }
                 };
                 
                 list.appendChild(card);
             });
             
-            // Snapshot submit handler
             document.getElementById('btn-submit-snap').onclick = () => {
                 const desc = document.getElementById('snap-desc-input').value.trim();
                 const image = document.getElementById('snap-image-select').value;
-                
                 if (desc) {
-                    const newLook = {
-                        id: 'look-' + Date.now(),
-                        brand: '결 (GYEOL) 디렉션',
-                        author: state.user.name,
-                        image,
-                        description: desc,
-                        likes: 1,
-                        comments: []
-                    };
-                    state.lookbooks.unshift(newLook);
+                    state.lookbooks.unshift({ id:'look-'+Date.now(), brand:'결 (GYEOL) 디렉션', author:state.user.name, image, description:desc, likes:1, comments:[] });
                     saveLocalState();
                     router.views.lookbook();
                 }
@@ -772,25 +789,25 @@ const router = {
             const container = document.getElementById('view-container');
             container.innerHTML = `
                 <div class="fade-in">
-                    <div style="border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px;">
-                        <h2 style="font-family: var(--font-serif); font-size: 2.2rem; margin: 0;">Sensory Fabrics Archive</h2>
-                        <p style="font-size: 0.95rem; color: var(--text-muted); margin-top: 4px;">아카이브 쇼룸의 의류 제품에 사용되는 프리미엄 고유 원단 정보입니다.</p>
+                    <div style="padding:56px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px;">
+                        <div class="hero-eyebrow">Materials · Textile Research</div>
+                        <h2 class="page-title">Fabric <em>Archive</em></h2>
+                        <p style="font-size:0.88rem;color:var(--text-muted);max-width:440px;line-height:1.7;font-weight:300;">아카이브 쇼룸 제품에 사용되는 프리미엄 고유 원단 스펙 및 텍스처 정보.</p>
                     </div>
                     
-                    <div style="display: grid; gap: 24px;">
+                    <div class="fabric-showcase">
                         ${state.fabrics.map(fab => `
-                            <div class="card" style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap; padding: 20px;">
-                                <div style="width: 130px; height: 130px; border-radius: var(--radius-md); background: ${fab.style}; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
-                                    <span style="color: white; font-weight: 700; font-size: 1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.6);">${fab.weight}</span>
+                            <div class="fabric-card">
+                                <div class="fabric-swatch" style="background:${fab.style};">
+                                    <div style="position:absolute;bottom:12px;left:12px;color:rgba(255,255,255,0.9);font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-shadow:0 1px 4px rgba(0,0,0,0.5);">${fab.weight}</div>
                                 </div>
-                                <div style="flex: 1; min-width: 250px;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                        <h3 style="font-size: 1.3rem; font-family: var(--font-serif); margin: 0;">${fab.name}</h3>
-                                        <div style="display: flex; gap: 6px;">
-                                            ${fab.tags.map(t => `<span style="font-size: 0.7rem; background: var(--bg-elevated); padding: 2px 8px; border-radius: 20px; font-weight: 500;">${t}</span>`).join('')}
-                                        </div>
+                                <div class="fabric-body">
+                                    <div class="fabric-name">${fab.name}</div>
+                                    <div class="fabric-weight">${fab.weight}</div>
+                                    <p class="fabric-desc">${fab.desc}</p>
+                                    <div class="fabric-tags">
+                                        ${fab.tags.map(tag => `<span class="fabric-tag">${tag}</span>`).join('')}
                                     </div>
-                                    <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;">${fab.desc}</p>
                                 </div>
                             </div>
                         `).join('')}
@@ -803,32 +820,33 @@ const router = {
             const container = document.getElementById('view-container');
             container.innerHTML = `
                 <div class="fade-in">
-                    <div style="border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px;">
-                        <h2 style="font-family: var(--font-serif); font-size: 2.2rem; margin: 0;">Seongsu Factory Matcher</h2>
-                        <p style="font-size: 0.95rem; color: var(--text-muted); margin-top: 4px;">성수동 일대의 고품질 디자이너 봉제 공장 및 소량 생산 라인을 연계해 드립니다.</p>
+                    <div style="padding:56px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px;">
+                        <div class="hero-eyebrow">Production Network · Seongsu</div>
+                        <h2 class="page-title">Factory <em>Matcher</em></h2>
+                        <p style="font-size:0.88rem;color:var(--text-muted);max-width:440px;line-height:1.7;font-weight:300;">성수동 일대 고품질 디자이너 봉제 공장 및 소량 생산 라인 매칭 서비스.</p>
                     </div>
                     
-                    <div style="display: grid; gap: 20px;">
+                    <div class="matcher-grid">
                         ${state.manufacturers.map(fac => `
-                            <div class="card" style="padding: 24px;">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-                                    <div>
-                                        <h3 style="font-size: 1.3rem; font-family: var(--font-serif); margin: 0; margin-bottom: 4px;">${fac.name}</h3>
-                                        <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fas fa-map-marker-alt"></i> ${fac.location}</span>
+                            <div class="matcher-card">
+                                <div class="matcher-name">${fac.name}</div>
+                                <div class="matcher-location"><i class="fas fa-location-dot"></i>&nbsp; ${fac.location}</div>
+                                <div class="matcher-specs">
+                                    <div class="matcher-spec-item">
+                                        <span class="matcher-spec-label">Min Order</span>
+                                        <span class="matcher-spec-value">${fac.moq}벌</span>
                                     </div>
-                                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--primary); background: var(--bg-elevated); padding: 4px 12px; border-radius: 20px;">
-                                        최소생산 MOQ: ${fac.moq}벌
-                                    </span>
+                                    <div class="matcher-spec-item">
+                                        <span class="matcher-spec-label">Lead Time</span>
+                                        <span class="matcher-spec-value">${fac.leadTime}</span>
+                                    </div>
                                 </div>
-                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 0.88rem; margin-bottom: 20px; background: var(--bg-elevated); padding: 12px; border-radius: var(--radius-sm);">
-                                    <div><strong>제작 리드타임:</strong> <span style="color: var(--text-muted);">${fac.leadTime}</span></div>
-                                    <div><strong>봉제 전문분야:</strong> <span style="color: var(--text-muted);">${fac.specialty}</span></div>
+                                <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:20px;line-height:1.5;">
+                                    <span style="font-weight:600;color:var(--text-main);">전문 분야 —</span> ${fac.specialty}
                                 </div>
-                                <div style="display: flex; justify-content: flex-end;">
-                                    <button class="btn btn-primary" onclick="alert('${fac.name} 파트너 채널 연결: ${fac.contact}')" style="padding: 8px 16px; font-size: 0.8rem;">
-                                        <i class="fas fa-phone" style="margin-right: 6px;"></i> 다이렉트 소싱 라인 문의
-                                    </button>
-                                </div>
+                                <button class="btn btn-primary" style="width:100%;" onclick="alert('${fac.name} 연결: ${fac.contact}')">
+                                    <i class="fas fa-arrow-right"></i>&nbsp; 소싱 라인 문의
+                                </button>
                             </div>
                         `).join('')}
                     </div>
@@ -851,6 +869,12 @@ function renderHeader() {
         nav.innerHTML = '<gyeol-nav></gyeol-nav>';
     }
 }
+
+// Sticky header shadow on scroll
+window.addEventListener('scroll', () => {
+    const header = document.getElementById('main-header');
+    if (header) header.classList.toggle('scrolled', window.scrollY > 8);
+}, { passive: true });
 
 // --- Entry Point On Dom Content Loaded ---
 document.addEventListener('DOMContentLoaded', async () => {
@@ -880,7 +904,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const splash = document.getElementById('splash-screen');
         if (splash) {
             splash.classList.add('fade-out');
-            setTimeout(() => splash.remove(), 800);
+            setTimeout(() => splash.remove(), 1000);
         }
-    }, 1500);
+    }, 2000);
 });
