@@ -976,7 +976,7 @@ const router = {
                         console.warn("LocalStorage read failed:", e);
                     }
                     
-                    const existsLocally = currentSignups.some(u => u && u.email && u.email.toLowerCase() === email);
+                    const existsLocally = currentSignups.some(u => u && u.email && u.email.toLowerCase() === email && u.pw);
                     if (existsLocally) {
                         alert("이미 존재하는 회원입니다.");
                         return;
@@ -989,7 +989,7 @@ const router = {
                             let existsInFirestore = false;
                             querySnapshot.forEach((doc) => {
                                 const data = doc.data();
-                                if (data.email && data.email.toLowerCase() === email) {
+                                if (data.email && data.email.toLowerCase() === email && data.pw) {
                                     existsInFirestore = true;
                                 }
                             });
@@ -1013,6 +1013,8 @@ const router = {
                     // LocalStorage save
                     try {
                         let currentSignups = JSON.parse(localStorage.getItem('zipp_signups') || '[]');
+                        // Filter out old or duplicate entries for this email address to keep local storage clean
+                        currentSignups = currentSignups.filter(u => !u || !u.email || u.email.toLowerCase() !== email);
                         currentSignups.push(signupData);
                         localStorage.setItem('zipp_signups', JSON.stringify(currentSignups));
                     } catch (e) {
@@ -1180,15 +1182,15 @@ const router = {
                                     
                                     // Sync back to local storage for future speed
                                     try {
-                                        if (!currentSignups.some(u => u && u.email && u.email.toLowerCase() === email)) {
-                                            currentSignups.push({
-                                                name: foundUser.name,
-                                                email: foundUser.email,
-                                                pw: foundUser.pw,
-                                                timestamp: foundUser.timestamp || new Date().toLocaleString('ko-KR')
-                                            });
-                                            localStorage.setItem('zipp_signups', JSON.stringify(currentSignups));
-                                        }
+                                        // Overwrite old duplicates with the valid record from Firestore
+                                        currentSignups = currentSignups.filter(u => !u || !u.email || u.email.toLowerCase() !== email);
+                                        currentSignups.push({
+                                            name: foundUser.name,
+                                            email: foundUser.email,
+                                            pw: foundUser.pw,
+                                            timestamp: foundUser.timestamp || new Date().toLocaleString('ko-KR')
+                                        });
+                                        localStorage.setItem('zipp_signups', JSON.stringify(currentSignups));
                                     } catch (err) {
                                         console.warn("Failed to sync Firestore user to localStorage:", err);
                                     }
