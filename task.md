@@ -1,5 +1,6 @@
-- [x] Allow legacy accounts (without passwords in Firestore or localStorage) to register again to break signup/login deadlock
-- [x] Filter out and overwrite duplicate/old records in local storage during signup and Firestore sync-back
+- [x] Check for both email AND password matching in the login handler to avoid oldest-duplicate conflicts
+- [x] Auto-purge duplicate records in local storage upon successful login to keep data clean
+- [x] Prompt user to confirm password reset when attempting to sign up with an existing email
 - [x] Stage and commit changes
 - [x] Push to `main` and `gh-pages` branches to deploy
 - [x] Verify deployment

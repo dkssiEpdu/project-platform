@@ -1,23 +1,27 @@
-# Legacy Accounts Overwriting & Duplicate Sanitization Walkthrough
+# Safe Login Matching & Password Reset Prompts Walkthrough
 
-Resolved the deadlock where legacy test accounts without passwords prevented new signups but failed logins, and sanitized duplicate/stale records in local storage.
+Resolved duplicate oldest-record conflicts on logins and implemented a password reset confirmation dialog during registration.
 
 ## Changes Made
 
-1. **Broke Signup/Login Deadlock for Legacy Accounts**:
-   - **`main.js`**: Modified the duplicate email checking function during signup. It now only blocks registration if the existing record in `localStorage` or Firestore *contains a password* (`pw`).
-   - If a matching email exists but does not have a password (meaning it's an old test record from prior development), the check is bypassed, allowing the user to register again to save their password and resolve their login issues.
+1. **Email and Password Matching in Lookup**:
+   - **`main.js`**: Changed the login lookup function to search for a record matching both email AND password:
+     `const user = currentSignups.find(u => u && u.email && u.email.toLowerCase() === email && u.pw === pw);`
+   - This resolves conflicts where a user has multiple records for the same email address in their browser storage (from prior test signups). Previously, `.find()` would only return the oldest record, ignoring any newer records with updated passwords.
 
-2. **Sanitized Duplicate Records in Local Storage**:
-   - **`main.js`**: Updated the signup local storage save block to filter out and delete any duplicate records for the same email address before pushing the new registration.
-   - Updated the Firestore login sync-back block to also filter out and replace any duplicate local records for the authenticated email.
-   - This ensures `localStorage` never contains multiple entries for the same user, which previously caused the lookup function `.find()` to get stuck on older records.
+2. **Auto-Purge Stale Duplicates on Login**:
+   - **`main.js`**: Updated the successful login block to filter out and delete any other duplicate records for that email address from `localStorage`, ensuring only the single correct record remains.
 
-3. **Redeployment**:
+3. **User-Friendly Password Reset Confirmation**:
+   - **`main.js`**: Replaced the strict duplicate block alert during registration.
+   - If the email already exists in `localStorage` or Firestore, it now prompts: `"이미 존재하는 회원입니다. 입력하신 비밀번호로 재설정하여 재가입하시겠습니까?"` (This member already exists. Would you like to re-register and reset your password to the one entered?)
+   - If the user clicks **OK**, the signup proceeds, overwrites their password, purges any duplicates, and completes registration successfully.
+
+4. **Redeployment**:
    - Committed changes and pushed to both `main` and `gh-pages` branches.
 
 ## Verification
 
 - **Node Syntax Check**: Confirmed that the script parses successfully.
-- **Git Push Status**: Confirmed remote `main` and `gh-pages` branches are updated to commit `b4cd8dc`.
+- **Git Push Status**: Confirmed remote `main` and `gh-pages` branches are updated to commit `8441133`.
 - **Live URL**: [ZIPP Live Showroom](https://dkssiepdu.github.io/project-platform/)
