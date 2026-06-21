@@ -20,8 +20,7 @@
   - `Syne` (geometric sans) at tiny uppercase weights for labels/eyebrows.
   - `Outfit` (body text, clean and legible).
 - **Color System (OKLCH Tokens):**
-  - Light: Soft ivory background (`oklch(96.5% 0.006 55)`), pure white cards, warm coal text.
-  - Dark: Deep charcoal (`oklch(11% 0.018 30)`), elevated cards, champagne gold accents.
+  - Soft ivory background (`oklch(96.5% 0.006 55)`), pure white cards, warm coal text. Pure light theme.
 - **Design Character:**
   - Dramatic font-size hierarchy — enormous serif hero titles vs. tiny uppercase eyebrow labels.
   - Immersive product cards: full-bleed images, gradient overlay on hover, "VIEW DETAIL" CTA appears.

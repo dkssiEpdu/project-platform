@@ -222,9 +222,6 @@ class GyeolNav extends HTMLElement {
         this.render();
     }
     render() {
-        const themeIcon = state.theme === 'dark' ? 'fa-sun' : 'fa-moon';
-        const themeLabel = state.theme === 'dark' ? 'Light' : 'Dark';
-        
         this.innerHTML = `
             <div style="display: flex; align-items: center; gap: 2px; flex-wrap: wrap;">
                 <button class="nav-btn ${state.currentView === 'home' ? 'active' : ''}" data-view="home">${t('showroom')}</button>
@@ -232,10 +229,6 @@ class GyeolNav extends HTMLElement {
                 <button class="nav-btn ${state.currentView === 'lookbook' ? 'active' : ''}" data-view="lookbook">${t('lookbook')}</button>
                 <button class="nav-btn ${state.currentView === 'fabrics' ? 'active' : ''}" data-view="fabrics">${t('fabrics')}</button>
                 <button class="nav-btn ${state.currentView === 'matcher' ? 'active' : ''}" data-view="matcher">${t('matcher')}</button>
-                
-                <button class="util-btn" id="theme-toggle">
-                    <i class="fas ${themeIcon}"></i> <span>${themeLabel}</span>
-                </button>
                 
                 <button class="util-btn" id="lang-toggle">
                     <i class="fas fa-globe"></i> <span>${state.currentLanguage.toUpperCase()}</span>
@@ -246,12 +239,6 @@ class GyeolNav extends HTMLElement {
         this.querySelectorAll('.nav-btn').forEach(btn => {
             btn.onclick = () => router.navigate(btn.dataset.view);
         });
-
-        this.querySelector('#theme-toggle').onclick = () => {
-            state.theme = state.theme === 'dark' ? 'light' : 'dark';
-            document.body.classList.toggle('dark-theme', state.theme === 'dark');
-            this.render();
-        };
 
         this.querySelector('#lang-toggle').onclick = () => {
             state.currentLanguage = state.currentLanguage === 'ko' ? 'en' : 'ko';
@@ -880,13 +867,6 @@ window.addEventListener('scroll', () => {
 document.addEventListener('DOMContentLoaded', async () => {
     // Load local storage fallback
     loadLocalState();
-    
-    // Apply initial theme
-    if (state.theme === 'light') {
-        document.body.classList.remove('dark-theme');
-    } else {
-        document.body.classList.add('dark-theme');
-    }
     
     // Init Firebase
     await initFirebase();

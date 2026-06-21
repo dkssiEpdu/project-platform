@@ -48,29 +48,7 @@
     --dur-slow:   600ms;
 }
 
-body.dark-theme {
-    --bg-main:     oklch(11%  0.018 30);
-    --bg-card:     oklch(15%  0.022 30);
-    --bg-elevated: oklch(19%  0.025 30);
-    --bg-deep:     oklch(22%  0.025 32);
 
-    --text-main:   oklch(96%  0.010 40);
-    --text-muted:  oklch(62%  0.016 38);
-    --text-ghost:  oklch(42%  0.012 36);
-
-    --border:      oklch(24%  0.022 32);
-    --border-mid:  oklch(32%  0.028 34);
-
-    --primary:        oklch(84%  0.080 80);
-    --primary-warm:   oklch(76%  0.065 75);
-    --accent-gold:    oklch(82%  0.095 82);
-
-    --glass-bg:    rgba(16, 14, 12, 0.82);
-    --glass-border:rgba(255,255,255,0.05);
-    --shadow-soft: 0 2px 12px rgba(0,0,0,0.20), 0 8px 32px rgba(0,0,0,0.30);
-    --shadow-card: 0 4px 20px rgba(0,0,0,0.30), 0 20px 60px rgba(0,0,0,0.35);
-    --shadow-lift: 0 8px 40px rgba(0,0,0,0.45), 0 32px 80px rgba(0,0,0,0.40);
-}
 
 /* ─── Reset ──────────────────────────────────────────────────────── */
 *, *::before, *::after {
@@ -360,7 +338,7 @@ footer {
     margin-bottom: 40px;
     display: grid;
     grid-template-columns: 1fr auto;
-    align-items: end;
+    align-items: start;
     gap: 24px;
 }
 
@@ -577,10 +555,7 @@ footer {
     z-index: 1;
 }
 
-body.dark-theme .product-mood-badge {
-    background: rgba(20,18,16,0.88);
-    color: var(--text-main);
-}
+
 
 .product-info {
     padding: 14px 2px 0;
@@ -1309,7 +1284,7 @@ body.dark-theme .product-mood-badge {
 }
 
 @media (max-width: 768px) {
-    .header-content { padding: 0 20px; height: 56px; }
+    .header-content { padding: 12px 20px; height: auto; flex-direction: column; align-items: flex-start; gap: 8px; }
     #main-content { padding: 0 20px 60px; }
     .home-hero { padding: 40px 0 32px; }
     .detail-slider-panel { width: 100vw; right: -100vw; }
