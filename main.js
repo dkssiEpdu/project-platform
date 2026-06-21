@@ -977,19 +977,21 @@ const router = {
                     })
                 }).catch(err => console.warn("Email send failed:", err));
                 
-                // Firestore save if online
+                // Firestore save if online (background)
                 if (db) {
-                    try {
-                        const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
-                        await addDoc(collection(db, "signups"), {
-                            name,
-                            email,
-                            timestamp: new Date().toISOString()
-                        });
-                        console.log("Firestore signup logged successfully.");
-                    } catch (e) {
-                        console.warn("Firestore save failed, saved locally instead.", e);
-                    }
+                    (async () => {
+                        try {
+                            const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+                            await addDoc(collection(db, "signups"), {
+                                name,
+                                email,
+                                timestamp: new Date().toISOString()
+                            });
+                            console.log("Firestore signup logged successfully.");
+                        } catch (e) {
+                            console.warn("Firestore save failed, saved locally instead.", e);
+                        }
+                    })();
                 }
                 
                 // Log in user locally
