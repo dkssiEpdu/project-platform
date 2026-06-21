@@ -1,5 +1,5 @@
-- [x] Protect email comparison in `.find()` and `.some()` from TypeErrors by checking for existence of the `email` property
-- [x] Add duplicate email check in the signup view against both `localStorage` and Firestore
+- [x] Allow legacy accounts (without passwords in Firestore or localStorage) to register again to break signup/login deadlock
+- [x] Filter out and overwrite duplicate/old records in local storage during signup and Firestore sync-back
 - [x] Stage and commit changes
 - [x] Push to `main` and `gh-pages` branches to deploy
 - [x] Verify deployment
