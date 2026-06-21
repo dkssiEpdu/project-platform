@@ -939,6 +939,14 @@ const router = {
                     alert("모든 필드를 입력해 주세요.");
                     return;
                 }
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert("이메일의 형식이 유효하지 않습니다.");
+                    const emailInput = document.getElementById('join-email');
+                    emailInput.focus();
+                    return;
+                }
                 
                 // Save signup
                 const signupData = {
