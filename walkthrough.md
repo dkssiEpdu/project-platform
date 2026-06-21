@@ -1,21 +1,19 @@
-# Signup & Navigation Fix Walkthrough
+# Login Verification & Email Notification Fix Walkthrough
 
-Fixed the issue where clicking the signup button could fail or do nothing if the user didn't fill in optional fields, or if inline navigation handlers threw global script errors.
+Fixed issues where registered users could not log in due to email case-sensitivity and local storage cross-device isolation, and resolved missing email signup notifications.
 
 ## Changes Made
 
-1. **Made Name Optional with Fallback**:
-   - **`main.js`**: Changed the Name input label to `Name (Optional)`.
-   - Updated the validation to only require Email and Password.
-   - If the Name field is left empty, the code now automatically falls back to using the local part of the Email address (e.g. `user` from `user@domain.com`).
+1. **Email Case-Insensitive Matching**:
+   - **`main.js`**: Converted email inputs to lowercase during both signup and login before performing checks. This prevents casing mismatches (e.g. `Pvtmed1590@gmail.com` vs `pvtmed1590@gmail.com`).
 
-2. **Exposed Router Globally**:
-   - **`main.js`**: Added `window.router = router;` at the end of the `router` object definition.
-   - This resolves the `ReferenceError: router is not defined` when clicking inline `onclick="router.navigate(...)"` templates (e.g., from the login page, the signup success screen, or cancellation actions).
+2. **Cross-Device Firestore Login Fallback**:
+   - **`main.js`**: Enabled storing the password (`pw` field) in Firestore during signup.
+   - Updated the login handler to fall back to a Firestore query if the user is not found in local storage (or if they are on a different device).
+   - Once authenticated via Firestore, the account is automatically synced back to the device's local storage for instant offline/speedy future logins.
 
-3. **Added Robust Error Catching**:
-   - **`main.js`**: Wrapped both the signup and login event handlers in top-level `try-catch` blocks.
-   - In case of any unexpected errors (e.g., `localStorage` quota limit or browser restrictions), the script will alert the user with a descriptive error message instead of failing silently.
+3. **FormSubmit CAPTCHA Bypass**:
+   - **`main.js`**: Added `_captcha: "false"` to the FormSubmit AJAX JSON request payload. This stops FormSubmit from showing CAPTCHA screens or silently blocking requests.
 
 4. **Redeployment**:
    - Committed changes and pushed to both `main` and `gh-pages` branches.
@@ -23,5 +21,5 @@ Fixed the issue where clicking the signup button could fail or do nothing if the
 ## Verification
 
 - **Node Syntax Check**: Confirmed that the script parses successfully.
-- **Git Push Status**: Confirmed remote `main` and `gh-pages` branches are updated to commit `01f4347`.
+- **Git Push Status**: Confirmed remote `main` and `gh-pages` branches are updated to commit `bf3743d`.
 - **Live URL**: [ZIPP Live Showroom](https://dkssiepdu.github.io/project-platform/)
