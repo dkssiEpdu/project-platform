@@ -3,6 +3,7 @@
 // --- Firebase Configuration & Fallback ---
 let db = null;
 let auth = null;
+let firebaseInitPromise = null;
 
 const firebaseConfig = {
     apiKey: "AIzaSyDummyKeyForTestingOnly",
@@ -207,6 +208,14 @@ function loadLocalState() {
     if (savedLookbooks) {
         state.lookbooks = JSON.parse(savedLookbooks);
     }
+    try {
+        const savedUser = localStorage.getItem('zipp_user');
+        if (savedUser) {
+            state.user = JSON.parse(savedUser);
+        }
+    } catch (e) {
+        console.warn("Failed to load user session:", e);
+    }
 }
 
 function saveLocalState() {
@@ -251,6 +260,11 @@ class GyeolNav extends HTMLElement {
             this.querySelector('#logout-btn').onclick = () => {
                 if (confirm("로그아웃 하시겠습니까?")) {
                     state.user = { name: '디렉터 게스트', id: 'director_guest' };
+                    try {
+                        localStorage.removeItem('zipp_user');
+                    } catch (e) {
+                        console.warn("Failed to remove user session:", e);
+                    }
                     router.navigate('home');
                 }
             };
@@ -1016,6 +1030,11 @@ const router = {
                     
                     // Log in user locally
                     state.user = { name: name, id: 'user_' + Date.now() };
+                    try {
+                        localStorage.setItem('zipp_user', JSON.stringify(state.user));
+                    } catch (e) {
+                        console.warn("Failed to save user session:", e);
+                    }
                     router.navigate('signupSuccess');
                 } catch (error) {
                     console.error("Signup handler failed:", error);
@@ -1066,7 +1085,7 @@ const router = {
                 </div>
             `;
             
-            document.getElementById('btn-submit-login').onclick = () => {
+            document.getElementById('btn-submit-login').onclick = async () => {
                 try {
                     const email = document.getElementById('login-email').value.trim().toLowerCase();
                     const pw = document.getElementById('login-pw').value.trim();
@@ -1088,11 +1107,24 @@ const router = {
                     
                     if (user && user.pw === pw) {
                         state.user = { name: user.name, id: 'user_' + Date.now() };
+                        try {
+                            localStorage.setItem('zipp_user', JSON.stringify(state.user));
+                        } catch (e) {
+                            console.warn("Failed to save user session:", e);
+                        }
                         alert(`${user.name}님, 환영합니다!`);
                         router.navigate('home');
-                    } else if (db) {
-                        // Check Firestore for cross-device authentication fallback
-                        (async () => {
+                    } else {
+                        // Wait for Firebase initialization fallback if not found locally or password mismatch
+                        if (firebaseInitPromise) {
+                            try {
+                                await firebaseInitPromise;
+                            } catch (e) {
+                                console.warn("Firebase initialization wait failed:", e);
+                            }
+                        }
+
+                        if (db) {
                             try {
                                 const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
                                 const querySnapshot = await getDocs(collection(db, "signups"));
@@ -1106,6 +1138,11 @@ const router = {
                                 
                                 if (foundUser && foundUser.pw === pw) {
                                     state.user = { name: foundUser.name, id: 'user_' + Date.now() };
+                                    try {
+                                        localStorage.setItem('zipp_user', JSON.stringify(state.user));
+                                    } catch (e) {
+                                        console.warn("Failed to save user session:", e);
+                                    }
                                     
                                     // Sync back to local storage for future speed
                                     try {
@@ -1131,9 +1168,9 @@ const router = {
                                 console.error("Firestore authentication failed:", e);
                                 alert("이메일 또는 비밀번호가 일치하지 않습니다.");
                             }
-                        })();
-                    } else {
-                        alert("이메일 또는 비밀번호가 일치하지 않습니다.");
+                        } else {
+                            alert("이메일 또는 비밀번호가 일치하지 않습니다.");
+                        }
                     }
                 } catch (error) {
                     console.error("Login handler failed:", error);
@@ -1180,5 +1217,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     // Init Firebase in the background
-    initFirebase().catch(e => console.warn("Firebase bg initialization failed:", e));
+    firebaseInitPromise = initFirebase();
+    firebaseInitPromise.catch(e => console.warn("Firebase bg initialization failed:", e));
 });
