@@ -1,7 +1,7 @@
-# GYEOL (결) Project Blueprint
+# ZIPP Project Blueprint
 
 ## Overview
-**GYEOL (결)** is a premium, high-aesthetic independent clothing product platform inspired by Musinsa, specifically tailored to Korean 20-30s design sentiments. The name "결" represents the grain of fabrics, textures, and the unique emotional flow of each boutique brand.
+**ZIPP** is a premium, high-aesthetic independent clothing product platform inspired by Musinsa and Zigzag, specifically tailored to Korean 20-30s design sentiments. The name "ZIPP" represents the compression of diverse designer brands into one curated space, like zipping up a zipper to open new styles.
 
 ## Technical Stack
 - **Frontend:** Vanilla HTML5, CSS3 (Baseline container queries, variables, custom properties, OKLCH colors), ES Modules JavaScript.
@@ -33,8 +33,8 @@
 
 ### 2. Splash Screen
 - Eyebrow label: "Independent Brand Archive"
-- Large thin-weight serif H1 `결 (GYEOL)` at fluid clamp size.
-- Italic subtitle: "고유한 결을 기록하다"
+- Large thin-weight serif H1 `ZIPP` at fluid clamp size.
+- Italic subtitle: "브랜드를 한 곳에 압축하다"
 - Thin 80px loading line with sliding animation.
 
 ### 3. Core SPA Router Views (JS)

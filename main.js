@@ -1,4 +1,4 @@
-// GYEOL (결) - Independent Brand Product Archive Main Module
+// ZIPP - Independent Brand Product Archive Main Module
 
 // --- Firebase Configuration & Fallback ---
 let db = null;
@@ -102,7 +102,7 @@ const state = {
         },
         {
             id: 'prod-4',
-            brand: '결 (GYEOL)',
+            brand: 'ZIPP',
             name: '내추럴 슬러브 린넨 루즈 트라우저',
             price: 98000,
             category: 'Pants',
@@ -113,7 +113,7 @@ const state = {
             image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600&auto=format&fit=crop&q=80',
             sizes: ['M', 'L'],
             reviews: [
-                { author: 'ss_look', rating: 5, text: '결 특유의 텍스처가 시각적으로 시원해 보여서 참 좋네요.' }
+                { author: 'ss_look', rating: 5, text: 'ZIPP 특유의 텍스처가 시각적으로 시원해 보여서 참 좋네요.' }
             ],
             inquiries: []
         }
@@ -172,7 +172,7 @@ const translations = {
         submitBtn: '새 상품 등록하기',
         themeToggle: '테마 전환',
         chatPlaceholder: '브랜드 미학이나 소싱 공장에 관해 물어보세요...',
-        botIntro: '안녕하세요! 결 (GYEOL) 아카이브 가이드입니다. 20-30대 미학 제품 컬렉션 및 성수동 봉제 라인 매칭에 대해 조언해 드립니다.'
+        botIntro: '안녕하세요! ZIPP 아카이브 가이드입니다. 20-30대 미학 제품 컬렉션 및 성수동 봉제 라인 매칭에 대해 조언해 드립니다.'
     },
     en: {
         showroom: 'Store',
@@ -186,7 +186,7 @@ const translations = {
         submitBtn: 'Register Product',
         themeToggle: 'Toggle Theme',
         chatPlaceholder: 'Ask about fashion aesthetics or factories...',
-        botIntro: 'Hello! I am your GYEOL Archive Guide. I can advise you on independent brand styling and Seongsu sewing lines.'
+        botIntro: 'Hello! I am your ZIPP Archive Guide. I can advise you on independent brand styling and Seongsu sewing lines.'
     }
 };
 
@@ -259,7 +259,7 @@ class GyeolNav extends HTMLElement {
         };
     }
 }
-customElements.define('gyeol-nav', GyeolNav);
+customElements.define('zipp-nav', GyeolNav);
 
 // Product Item Card
 class GyeolProductCard extends HTMLElement {
@@ -297,7 +297,7 @@ class GyeolProductCard extends HTMLElement {
         };
     }
 }
-customElements.define('gyeol-product-card', GyeolProductCard);
+customElements.define('zipp-product-card', GyeolProductCard);
 
 // Floating AI Assistant chatbot
 class GyeolChatbot extends HTMLElement {
@@ -311,7 +311,7 @@ class GyeolChatbot extends HTMLElement {
                 <div class="chatbot-window" id="chatbot-window">
                     <div class="chatbot-header">
                         <div>
-                            <div class="chatbot-header-title">결 Guide</div>
+                            <div class="chatbot-header-title">ZIPP Guide</div>
                             <div class="chatbot-header-sub">Archive AI · Always here</div>
                         </div>
                         <button id="close-chat" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;padding:4px;"><i class="fas fa-times"></i></button>
@@ -365,20 +365,20 @@ class GyeolChatbot extends HTMLElement {
         input.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
     }
 }
-customElements.define('gyeol-chatbot', GyeolChatbot);
+customElements.define('zipp-chatbot', GyeolChatbot);
 
 function getBotResponse(query) {
     const q = query.toLowerCase();
-    if (q.includes('무신사') || q.includes('musinsa')) {
-        return "결(GYEOL)은 독립 디자인 브랜드들이 자유롭게 룩북과 아이템을 등재하는 아카이브 스토어입니다. 상단의 '제품 등록' 메뉴를 눌러 귀사의 브랜드를 런칭해 보세요!";
+    if (q.includes('무신사') || q.includes('musinsa') || q.includes('zipp')) {
+        return "ZIPP은 독립 디자인 브랜드들이 자유롭게 룩북과 아이템을 등재하는 아카이브 스토어입니다. 상단의 '제품 등록' 메뉴를 눌러 귀사의 브랜드를 런칭해 보세요!";
     }
     if (q.includes('성수') || q.includes('seongsu')) {
-        return "성수동 감성은 원단의 질감(결)과 인더스트리얼 레이아웃, 그리고 정갈한 세리프 한글 폰트(고운바탕)에서 출발합니다. 저희 플랫폼 디자인 역시 성수동의 세련된 쇼룸 분위기를 재현했습니다.";
+        return "ZIPP의 감성은 옷의 지퍼(Zipper)처럼 개성을 열고 닫는 연결성, 인더스트리얼 레이아웃에서 출발합니다. 저희 플랫폼 디자인 역시 성수동의 세련된 쇼룸 분위기를 재현했습니다.";
     }
     if (q.includes('소재') || q.includes('원단') || q.includes('원사')) {
         return "각 제품의 상세페이지에서 실크 사틴, 재패니즈 샐비지 데님, 린넨 등 정갈한 원재료의 텍스처를 소개하고 있습니다. '원단 아카이브' 메뉴에서 각 원자재 스펙을 살펴보실 수 있습니다.";
     }
-    return "결 (GYEOL) 아카이브에 대해 더 궁금한 점이 있으신가요? 카테고리 필터링이나 제품 등록 절차에 대해 알려드릴 수 있습니다.";
+    return "ZIPP 아카이브에 대해 더 궁금한 점이 있으신가요? 카테고리 필터링이나 제품 등록 절차에 대해 알려드릴 수 있습니다.";
 }
 
 // --- Product Detailed Drawer Overlay Controller ---
@@ -517,8 +517,8 @@ const router = {
                     <div class="home-hero">
                         <div>
                             <div class="hero-eyebrow">독립 브랜드 아카이브 · Seongsu Edition</div>
-                            <h2 class="hero-title">결<em>(GYEOL)</em><br>Archive Store</h2>
-                            <p class="hero-desc">독립 디자이너 브랜드의 고유한 결을 — 원단의 질감, 실루엣의 흐름, 브랜드 미학 — 기록하는 제품 쇼룸.</p>
+                            <h2 class="hero-title">ZIPP<em>(지프)</em><br>Archive Store</h2>
+                            <p class="hero-desc">독립 디자이너 브랜드의 개성을 압축해 둔 곳 — 지퍼를 올리듯 감각을 여는 패션 쇼룸.</p>
                         </div>
                         <div class="hero-meta">
                             <div class="hero-count">${String(totalCount).padStart(2, '0')}</div>
@@ -568,7 +568,7 @@ const router = {
                 grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-box-open"></i></div><p>검색 필터에 일치하는 상품이 없습니다.</p></div>`;
             } else {
                 filtered.forEach(p => {
-                    const card = document.createElement('gyeol-product-card');
+                    const card = document.createElement('zipp-product-card');
                     card.productData = p;
                     grid.appendChild(card);
                 });
@@ -590,7 +590,7 @@ const router = {
                         <div class="uploader-form-grid" style="margin-bottom:24px;">
                             <div>
                                 <label class="form-label">Brand Name</label>
-                                <input type="text" id="up-brand" class="input-field" placeholder="예: 오디티 (ODDITY)" value="결 (GYEOL)">
+                                <input type="text" id="up-brand" class="input-field" placeholder="예: 오디티 (ODDITY)" value="ZIPP">
                             </div>
                             <div>
                                 <label class="form-label">Product Title</label>
@@ -778,7 +778,7 @@ const router = {
                 const desc = document.getElementById('snap-desc-input').value.trim();
                 const image = document.getElementById('snap-image-select').value;
                 if (desc) {
-                    state.lookbooks.unshift({ id:'look-'+Date.now(), brand:'결 (GYEOL) 디렉션', author:state.user.name, image, description:desc, likes:1, comments:[] });
+                    state.lookbooks.unshift({ id:'look-'+Date.now(), brand:'ZIPP 디렉션', author:state.user.name, image, description:desc, likes:1, comments:[] });
                     saveLocalState();
                     router.views.lookbook();
                 }
@@ -866,7 +866,7 @@ const router = {
 function renderHeader() {
     const nav = document.getElementById('header-nav');
     if (nav) {
-        nav.innerHTML = '<gyeol-nav></gyeol-nav>';
+        nav.innerHTML = '<zipp-nav></zipp-nav>';
     }
 }
 
