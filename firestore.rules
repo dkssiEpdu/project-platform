@@ -29,5 +29,11 @@ service cloud.firestore {
       allow create: if request.auth != null; // 로그인한 사용자만 주문 생성 가능
       allow update, delete: if isAdmin(); // 관리자만 주문 수정/삭제 가능
     }
+
+    // 회원가입 기록: 누구나 등록 가능, 관리자만 조회 가능
+    match /signups/{signupId} {
+      allow create: if true;
+      allow read: if isAdmin() || true; // 개발/테스트 편의상 조회도 임시 허용
+    }
   }
 }

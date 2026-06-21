@@ -222,6 +222,11 @@ class GyeolNav extends HTMLElement {
         this.render();
     }
     render() {
+        const isGuest = state.user.name === '디렉터 게스트';
+        const userBtnHtml = isGuest 
+            ? `<button class="nav-btn ${state.currentView === 'signup' ? 'active' : ''}" data-view="signup">회원가입</button>`
+            : `<button class="util-btn" id="logout-btn" style="border-color:var(--accent-gold);color:var(--accent-gold);margin-left:4px;"><i class="fas fa-user"></i> <span>${state.user.name}</span></button>`;
+
         this.innerHTML = `
             <div style="display: flex; align-items: center; gap: 2px; flex-wrap: wrap;">
                 <button class="nav-btn ${state.currentView === 'home' ? 'active' : ''}" data-view="home">${t('showroom')}</button>
@@ -229,6 +234,7 @@ class GyeolNav extends HTMLElement {
                 <button class="nav-btn ${state.currentView === 'lookbook' ? 'active' : ''}" data-view="lookbook">${t('lookbook')}</button>
                 <button class="nav-btn ${state.currentView === 'fabrics' ? 'active' : ''}" data-view="fabrics">${t('fabrics')}</button>
                 <button class="nav-btn ${state.currentView === 'matcher' ? 'active' : ''}" data-view="matcher">${t('matcher')}</button>
+                ${userBtnHtml}
                 
                 <button class="util-btn" id="lang-toggle">
                     <i class="fas fa-globe"></i> <span>${state.currentLanguage.toUpperCase()}</span>
@@ -239,6 +245,15 @@ class GyeolNav extends HTMLElement {
         this.querySelectorAll('.nav-btn').forEach(btn => {
             btn.onclick = () => router.navigate(btn.dataset.view);
         });
+
+        if (!isGuest) {
+            this.querySelector('#logout-btn').onclick = () => {
+                if (confirm("로그아웃 하시겠습니까?")) {
+                    state.user = { name: '디렉터 게스트', id: 'director_guest' };
+                    router.navigate('home');
+                }
+            };
+        }
 
         this.querySelector('#lang-toggle').onclick = () => {
             state.currentLanguage = state.currentLanguage === 'ko' ? 'en' : 'ko';
@@ -623,6 +638,13 @@ const router = {
                             <button class="btn btn-primary" id="btn-submit-product">${t('submitBtn')}</button>
                         </div>
                     </div>
+
+                    <div class="card" style="padding:36px;margin-top:40px;">
+                        <h3 style="font-family:var(--font-serif);font-size:1.4rem;font-weight:400;margin-bottom:18px;">가입 회원 목록 <em style="font-size:0.8rem;font-style:normal;color:var(--text-muted);">Admin Member List</em></h3>
+                        <div id="admin-members-list">
+                            <p style="font-size:0.84rem;color:var(--text-ghost);text-align:center;padding:24px 0;">가입된 회원이 없습니다.</p>
+                        </div>
+                    </div>
                 </div>
             `;
             
@@ -674,6 +696,60 @@ const router = {
                 alert(t('register'));
                 router.navigate('home');
             };
+
+            // 가입 회원 목록 렌더링 로직
+            const membersListContainer = document.getElementById('admin-members-list');
+            if (membersListContainer) {
+                const renderList = (list) => {
+                    if (list.length === 0) {
+                        membersListContainer.innerHTML = `<p style="font-size:0.84rem;color:var(--text-ghost);text-align:center;padding:24px 0;">가입된 회원이 없습니다.</p>`;
+                        return;
+                    }
+                    membersListContainer.innerHTML = `
+                        <div style="display:flex;flex-direction:column;gap:12px;">
+                            ${list.map(m => `
+                                <div style="display:flex;justify-content:space-between;padding:12px 16px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg-card);align-items:center;">
+                                    <div>
+                                        <div style="font-size:0.88rem;font-weight:600;color:var(--text-main);">${m.name}</div>
+                                        <div style="font-size:0.78rem;color:var(--text-muted);">${m.email}</div>
+                                    </div>
+                                    <div style="font-size:0.75rem;color:var(--text-ghost);">${m.timestamp}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                };
+
+                const localList = JSON.parse(localStorage.getItem('zipp_signups') || '[]');
+                renderList(localList);
+
+                if (db) {
+                    (async () => {
+                        try {
+                            const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+                            const querySnapshot = await getDocs(collection(db, "signups"));
+                            const firestoreList = [];
+                            querySnapshot.forEach((doc) => {
+                                const data = doc.data();
+                                firestoreList.push({
+                                    name: data.name,
+                                    email: data.email,
+                                    timestamp: data.timestamp ? new Date(data.timestamp).toLocaleString('ko-KR') : '알 수 없음'
+                                });
+                            });
+                            
+                            const mergedMap = new Map();
+                            localList.forEach(m => mergedMap.set(m.email, m));
+                            firestoreList.forEach(m => mergedMap.set(m.email, m));
+                            const mergedList = Array.from(mergedMap.values());
+                            
+                            renderList(mergedList);
+                        } catch (e) {
+                            console.warn("Firestore signups fetch failed, displaying local only.", e);
+                        }
+                    })();
+                }
+            }
         },
         
         lookbook: () => {
@@ -825,7 +901,76 @@ const router = {
                         `).join('')}
                     </div>
                 </div>
+        },
+        
+        signup: () => {
+            const container = document.getElementById('view-container');
+            container.innerHTML = `
+                <div class="fade-in" style="max-width:480px;margin:80px auto;">
+                    <div style="text-align:center;margin-bottom:32px;">
+                        <h2 class="page-title" style="font-family:var(--font-serif);font-size:2.2rem;font-weight:300;">Create <em>Account</em></h2>
+                        <p style="font-size:0.84rem;color:var(--text-muted);margin-top:8px;">ZIPP 아카이브 회원으로 가입하고 고유한 패션 미학을 경험하세요.</p>
+                    </div>
+                    <div class="card" style="padding:32px;">
+                        <div style="margin-bottom:16px;">
+                            <label class="form-label">Name</label>
+                            <input type="text" id="join-name" class="input-field" placeholder="이름을 입력하세요">
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="join-email" class="input-field" placeholder="example@email.com">
+                        </div>
+                        <div style="margin-bottom:24px;">
+                            <label class="form-label">Password</label>
+                            <input type="password" id="join-pw" class="input-field" placeholder="비밀번호를 입력하세요">
+                        </div>
+                        <button class="btn btn-primary" id="btn-submit-signup" style="width:100%;justify-content:center;">가입하기</button>
+                    </div>
+                </div>
             `;
+            
+            document.getElementById('btn-submit-signup').onclick = async () => {
+                const name = document.getElementById('join-name').value.trim();
+                const email = document.getElementById('join-email').value.trim();
+                const pw = document.getElementById('join-pw').value.trim();
+                
+                if (!name || !email || !pw) {
+                    alert("모든 필드를 입력해 주세요.");
+                    return;
+                }
+                
+                // Save signup
+                const signupData = {
+                    name,
+                    email,
+                    timestamp: new Date().toLocaleString('ko-KR')
+                };
+                
+                // LocalStorage save
+                let currentSignups = JSON.parse(localStorage.getItem('zipp_signups') || '[]');
+                currentSignups.push(signupData);
+                localStorage.setItem('zipp_signups', JSON.stringify(currentSignups));
+                
+                // Firestore save if online
+                if (db) {
+                    try {
+                        const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+                        await addDoc(collection(db, "signups"), {
+                            name,
+                            email,
+                            timestamp: new Date().toISOString()
+                        });
+                        console.log("Firestore signup logged successfully.");
+                    } catch (e) {
+                        console.warn("Firestore save failed, saved locally instead.", e);
+                    }
+                }
+                
+                // Log in user locally
+                state.user = { name: name, id: 'user_' + Date.now() };
+                alert("회원가입이 완료되었습니다!");
+                router.navigate('home');
+            };
         }
     },
     
@@ -866,12 +1011,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         logoBtn.onclick = () => router.navigate('home');
     }
     
-    // Splash screen fadeout
-    setTimeout(() => {
-        const splash = document.getElementById('splash-screen');
-        if (splash) {
-            splash.classList.add('fade-out');
-            setTimeout(() => splash.remove(), 1000);
-        }
-    }, 2000);
 });
