@@ -1,6 +1,4 @@
-- [x] Check for both email AND password matching in the login handler to avoid oldest-duplicate conflicts
-- [x] Auto-purge duplicate records in local storage upon successful login to keep data clean
-- [x] Prompt user to confirm password reset when attempting to sign up with an existing email
+- [x] Separate login error alerts into password mismatch vs. unregistered email for clearer diagnostics
 - [x] Stage and commit changes
 - [x] Push to `main` and `gh-pages` branches to deploy
 - [x] Verify deployment
