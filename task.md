@@ -1,7 +1,5 @@
-- [x] Persist user login state using `localStorage.setItem('zipp_user', ...)` on login and signup success
-- [x] Clear user session from `localStorage` on logout
-- [x] Load persisted user session from `localStorage` on startup in `loadLocalState`
-- [x] Store and await `firebaseInitPromise` in the login handler to eliminate race conditions when Firebase hasn't loaded yet
+- [x] Protect email comparison in `.find()` and `.some()` from TypeErrors by checking for existence of the `email` property
+- [x] Add duplicate email check in the signup view against both `localStorage` and Firestore
 - [x] Stage and commit changes
 - [x] Push to `main` and `gh-pages` branches to deploy
 - [x] Verify deployment

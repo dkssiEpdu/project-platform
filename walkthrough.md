@@ -1,18 +1,15 @@
-# Session Persistence & Firebase Load Fix Walkthrough
+# Safe Login Verification & Duplicate Email Check Walkthrough
 
-Fixed issues where closing the site window lost the logged-in session, and solved the login race condition where login verification failed if clicked before the Firebase SDK finished initializing.
+Fixed issues where login failed due to TypeErrors from older schema records in `localStorage`, and implemented duplicate email verification during registration.
 
 ## Changes Made
 
-1. **Persistent Session Handling**:
-   - **`main.js`**: Saved the logged-in user state to `localStorage` under `zipp_user` upon successful registration or login.
-   - Cleared `zipp_user` from `localStorage` during logout.
-   - Updated `loadLocalState()` to retrieve and restore `zipp_user` when the application starts, keeping the user logged in across page reloads and tab closures.
+1. **Safeguarded Email Property Lookups**:
+   - **`main.js`**: Updated the lookup functions (`.find()` in login, `.some()` in sync-back, and map-merging in uploader view) to safely verify that `u && u.email` is defined before calling `.toLowerCase()`. This prevents older test signup objects without email properties from throwing TypeErrors and crashing the authentication flow.
 
-2. **Resolved Login Race Condition (Firebase Init Wait)**:
-   - **`main.js`**: Saved the Promise returned by `initFirebase()` as `firebaseInitPromise`.
-   - Updated the login handler to be `async` and to `await firebaseInitPromise` before checking the Firestore database if a local storage lookup fails or if there is a password mismatch.
-   - This ensures that if the page is opened and a user immediately logs in on a clean/cleared browser profile, the login check will wait for Firebase to finish initializing rather than instantly failing with a "credentials do not match" warning.
+2. **Added Duplicate Email Verification**:
+   - **`main.js`**: Implemented a duplicate email check during signup. The form will query both the local storage (`localStorage`) list and the Firestore remote database (if online/available).
+   - If the email is already registered, registration is halted and the user is alerted with an "이미 존재하는 회원입니다." (This member already exists) message.
 
 3. **Redeployment**:
    - Committed changes and pushed to both `main` and `gh-pages` branches.
@@ -20,5 +17,5 @@ Fixed issues where closing the site window lost the logged-in session, and solve
 ## Verification
 
 - **Node Syntax Check**: Confirmed that the script parses successfully.
-- **Git Push Status**: Confirmed remote `main` and `gh-pages` branches are updated to commit `ac04e18`.
+- **Git Push Status**: Confirmed remote `main` and `gh-pages` branches are updated to commit `b166c81`.
 - **Live URL**: [ZIPP Live Showroom](https://dkssiepdu.github.io/project-platform/)
