@@ -38,7 +38,6 @@
 
 ### 3. Core SPA Router Views (JS)
 - **Home (브랜드 스토어):**
-  - Editorial magazine hero section: large title with italic variant, product count display.
   - Filter chips: rounded pill style, active = filled dark.
   - Product grid: image-dominant cards (3:4 ratio), hover reveals gradient overlay + CTA text.
   - Empty state with icon.

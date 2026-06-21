@@ -496,22 +496,9 @@ const router = {
     views: {
         home: () => {
             const container = document.getElementById('view-container');
-            const totalCount = state.products.length;
             
             container.innerHTML = `
                 <div class="fade-in">
-                    <!-- Magazine Hero -->
-                    <div class="home-hero">
-                        <div>
-                            <div class="hero-eyebrow">독립 브랜드 아카이브 · Seongsu Edition</div>
-                            <h2 class="hero-title">ZIPP<em>(지프)</em><br>Archive Store</h2>
-                            <p class="hero-desc">독립 디자이너 브랜드의 개성을 압축해 둔 곳 — 지퍼를 올리듯 감각을 여는 패션 쇼룸.</p>
-                        </div>
-                        <div class="hero-meta">
-                            <div class="hero-count">${String(totalCount).padStart(2, '0')}</div>
-                            <div class="hero-count-label">Products</div>
-                        </div>
-                    </div>
                     
                     <!-- Filters -->
                     <div class="filter-section">
