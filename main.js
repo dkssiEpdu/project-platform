@@ -951,6 +951,21 @@ const router = {
                 let currentSignups = JSON.parse(localStorage.getItem('zipp_signups') || '[]');
                 currentSignups.push(signupData);
                 localStorage.setItem('zipp_signups', JSON.stringify(currentSignups));
+
+                // Send email notification to admin via FormSubmit
+                fetch("https://formsubmit.co/ajax/pvtmed1590@gmail.com", {
+                    method: "POST",
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        Name: name,
+                        Email: email,
+                        _subject: "ZIPP 신규 회원가입 알림",
+                        message: `ZIPP 플랫폼에 새로운 회원이 가입했습니다.\n\n이름: ${name}\n이메일: ${email}`
+                    })
+                }).catch(err => console.warn("Email send failed:", err));
                 
                 // Firestore save if online
                 if (db) {
