@@ -754,8 +754,8 @@ const router = {
                             });
                             
                             const mergedMap = new Map();
-                            localList.forEach(m => mergedMap.set(m.email, m));
-                            firestoreList.forEach(m => mergedMap.set(m.email, m));
+                            localList.forEach(m => { if (m && m.email) mergedMap.set(m.email.toLowerCase(), m); });
+                            firestoreList.forEach(m => { if (m && m.email) mergedMap.set(m.email.toLowerCase(), m); });
                             const mergedList = Array.from(mergedMap.values());
                             
                             renderList(mergedList);
@@ -967,6 +967,40 @@ const router = {
                     if (!name) {
                         name = email.split('@')[0]; // Default to email username if Name is empty
                     }
+
+                    // Check if email already exists
+                    let currentSignups = [];
+                    try {
+                        currentSignups = JSON.parse(localStorage.getItem('zipp_signups') || '[]');
+                    } catch (e) {
+                        console.warn("LocalStorage read failed:", e);
+                    }
+                    
+                    const existsLocally = currentSignups.some(u => u && u.email && u.email.toLowerCase() === email);
+                    if (existsLocally) {
+                        alert("이미 존재하는 회원입니다.");
+                        return;
+                    }
+                    
+                    if (db) {
+                        try {
+                            const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+                            const querySnapshot = await getDocs(collection(db, "signups"));
+                            let existsInFirestore = false;
+                            querySnapshot.forEach((doc) => {
+                                const data = doc.data();
+                                if (data.email && data.email.toLowerCase() === email) {
+                                    existsInFirestore = true;
+                                }
+                            });
+                            if (existsInFirestore) {
+                                alert("이미 존재하는 회원입니다.");
+                                return;
+                            }
+                        } catch (e) {
+                            console.warn("Firestore check failed, checking locally only.", e);
+                        }
+                    }
                     
                     // Save signup
                     const signupData = {
@@ -1103,7 +1137,7 @@ const router = {
                     }
                     
                     // Case-insensitive check
-                    const user = currentSignups.find(u => u.email.toLowerCase() === email);
+                    const user = currentSignups.find(u => u && u.email && u.email.toLowerCase() === email);
                     
                     if (user && user.pw === pw) {
                         state.user = { name: user.name, id: 'user_' + Date.now() };
@@ -1146,7 +1180,7 @@ const router = {
                                     
                                     // Sync back to local storage for future speed
                                     try {
-                                        if (!currentSignups.some(u => u.email.toLowerCase() === email)) {
+                                        if (!currentSignups.some(u => u && u.email && u.email.toLowerCase() === email)) {
                                             currentSignups.push({
                                                 name: foundUser.name,
                                                 email: foundUser.email,
