@@ -6,7 +6,7 @@ let auth = null;
 let firebaseInitPromise = null;
 
 // --- JsonBlob Cloud Sync Database Fallback ---
-const CLOUD_DB_URL = "https://jsonblob.com/api/jsonBlob/019ee966-dd81-7389-8bf8-a4eee3cf943a";
+const CLOUD_DB_URL = "https://corsproxy.io/?https://jsonblob.com/api/jsonBlob/019ee966-dd81-7389-8bf8-a4eee3cf943a";
 
 async function getCloudSignups() {
     try {
