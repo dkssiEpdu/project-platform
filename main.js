@@ -5,6 +5,48 @@ let db = null;
 let auth = null;
 let firebaseInitPromise = null;
 
+// --- JsonBlob Cloud Sync Database Fallback ---
+const CLOUD_DB_URL = "https://jsonblob.com/api/jsonBlob/019ee966-dd81-7389-8bf8-a4eee3cf943a";
+
+async function getCloudSignups() {
+    try {
+        const response = await fetch(CLOUD_DB_URL);
+        if (!response.ok) {
+            throw new Error(`Cloud DB HTTP error: ${response.status}`);
+        }
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+    } catch (e) {
+        console.warn("Cloud DB fetch failed, returning empty list.", e);
+        return [];
+    }
+}
+
+async function saveCloudSignup(signupData) {
+    try {
+        const signups = await getCloudSignups();
+        const filtered = signups.filter(u => u && u.email && u.email.toLowerCase() !== signupData.email.toLowerCase());
+        filtered.push(signupData);
+        const response = await fetch(CLOUD_DB_URL, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(filtered)
+        });
+        if (!response.ok) {
+            throw new Error(`Cloud DB save HTTP error: ${response.status}`);
+        }
+        console.log("Cloud DB signup saved successfully.");
+        return true;
+    } catch (e) {
+        console.error("Cloud DB save failed.", e);
+        return false;
+    }
+}
+
+
 const firebaseConfig = {
     apiKey: "AIzaSyDummyKeyForTestingOnly",
     authDomain: "project-platform.firebaseapp.com",
@@ -738,12 +780,19 @@ const router = {
                 const localList = JSON.parse(localStorage.getItem('zipp_signups') || '[]');
                 renderList(localList);
 
-                if (db) {
-                    (async () => {
+                (async () => {
+                    let cloudList = [];
+                    try {
+                        cloudList = await getCloudSignups();
+                    } catch (err) {
+                        console.warn("Cloud DB fetch failed for member list:", err);
+                    }
+
+                    let firestoreList = [];
+                    if (db) {
                         try {
                             const { collection, getDocs } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
                             const querySnapshot = await getDocs(collection(db, "signups"));
-                            const firestoreList = [];
                             querySnapshot.forEach((doc) => {
                                 const data = doc.data();
                                 firestoreList.push({
@@ -752,18 +801,19 @@ const router = {
                                     timestamp: data.timestamp ? new Date(data.timestamp).toLocaleString('ko-KR') : '알 수 없음'
                                 });
                             });
-                            
-                            const mergedMap = new Map();
-                            localList.forEach(m => { if (m && m.email) mergedMap.set(m.email.toLowerCase(), m); });
-                            firestoreList.forEach(m => { if (m && m.email) mergedMap.set(m.email.toLowerCase(), m); });
-                            const mergedList = Array.from(mergedMap.values());
-                            
-                            renderList(mergedList);
                         } catch (e) {
-                            console.warn("Firestore signups fetch failed, displaying local only.", e);
+                            console.warn("Firestore signups fetch failed.", e);
                         }
-                    })();
-                }
+                    }
+
+                    const mergedMap = new Map();
+                    localList.forEach(m => { if (m && m.email) mergedMap.set(m.email.toLowerCase(), m); });
+                    cloudList.forEach(m => { if (m && m.email) mergedMap.set(m.email.toLowerCase(), m); });
+                    firestoreList.forEach(m => { if (m && m.email) mergedMap.set(m.email.toLowerCase(), m); });
+                    const mergedList = Array.from(mergedMap.values());
+                    
+                    renderList(mergedList);
+                })();
             }
         },
         
@@ -978,6 +1028,14 @@ const router = {
                     
                     const existsLocally = currentSignups.some(u => u && u.email && u.email.toLowerCase() === email && u.pw);
                     let existsInFirestore = false;
+                    let existsInCloud = false;
+
+                    try {
+                        const cloudSignups = await getCloudSignups();
+                        existsInCloud = cloudSignups.some(u => u && u.email && u.email.toLowerCase() === email && u.pw);
+                    } catch (err) {
+                        console.warn("Cloud DB check failed:", err);
+                    }
                     
                     if (db) {
                         try {
@@ -994,7 +1052,7 @@ const router = {
                         }
                     }
 
-                    if (existsLocally || existsInFirestore) {
+                    if (existsLocally || existsInFirestore || existsInCloud) {
                         const confirmReset = confirm("이미 존재하는 회원입니다. 입력하신 비밀번호로 재설정하여 재가입하시겠습니까?");
                         if (!confirmReset) {
                             return;
@@ -1018,6 +1076,13 @@ const router = {
                         localStorage.setItem('zipp_signups', JSON.stringify(currentSignups));
                     } catch (e) {
                         console.warn("LocalStorage save failed:", e);
+                    }
+
+                    // Save to JsonBlob Cloud Sync DB
+                    try {
+                        await saveCloudSignup(signupData);
+                    } catch (err) {
+                        console.warn("Cloud DB save failed:", err);
                     }
 
                     // Send email notification to admin via FormSubmit
@@ -1154,7 +1219,38 @@ const router = {
                         alert(`${user.name}님, 환영합니다!`);
                         router.navigate('home');
                     } else {
-                        // Wait for Firebase initialization fallback if not found locally or password mismatch
+                        // 1. Try JsonBlob Cloud DB sync check
+                        let foundCloudUser = null;
+                        try {
+                            const cloudSignups = await getCloudSignups();
+                            foundCloudUser = cloudSignups.find(u => u && u.email && u.email.toLowerCase() === email);
+                        } catch (err) {
+                            console.warn("Cloud DB login check failed:", err);
+                        }
+
+                        if (foundCloudUser) {
+                            if (foundCloudUser.pw === pw) {
+                                state.user = { name: foundCloudUser.name, id: 'user_' + Date.now() };
+                                try {
+                                    localStorage.setItem('zipp_user', JSON.stringify(state.user));
+                                    
+                                    // Sync back to local storage for future speed
+                                    currentSignups = currentSignups.filter(u => !u || !u.email || u.email.toLowerCase() !== email);
+                                    currentSignups.push(foundCloudUser);
+                                    localStorage.setItem('zipp_signups', JSON.stringify(currentSignups));
+                                } catch (e) {
+                                    console.warn("Failed to save user session or local sync:", e);
+                                }
+                                alert(`${foundCloudUser.name}님, 환영합니다!`);
+                                router.navigate('home');
+                                return;
+                            } else {
+                                alert("비밀번호가 일치하지 않습니다.");
+                                return;
+                            }
+                        }
+
+                        // 2. Try Firestore fallback in case there is anything there
                         if (firebaseInitPromise) {
                             try {
                                 await firebaseInitPromise;
@@ -1180,13 +1276,8 @@ const router = {
                                         state.user = { name: foundUser.name, id: 'user_' + Date.now() };
                                         try {
                                             localStorage.setItem('zipp_user', JSON.stringify(state.user));
-                                        } catch (e) {
-                                            console.warn("Failed to save user session:", e);
-                                        }
-                                        
-                                        // Sync back to local storage for future speed
-                                        try {
-                                            // Overwrite old duplicates with the valid record from Firestore
+                                            
+                                            // Sync back to local storage for future speed
                                             currentSignups = currentSignups.filter(u => !u || !u.email || u.email.toLowerCase() !== email);
                                             currentSignups.push({
                                                 name: foundUser.name,
@@ -1201,30 +1292,23 @@ const router = {
                                         
                                         alert(`${foundUser.name}님, 환영합니다!`);
                                         router.navigate('home');
+                                        return;
                                     } else {
                                         alert("비밀번호가 일치하지 않습니다.");
+                                        return;
                                     }
-                                } else {
-                                    alert("존재하지 않는 이메일 주소입니다. 가입 정보를 확인해 주세요.");
                                 }
                             } catch (e) {
                                 console.error("Firestore authentication failed:", e);
-                                // Fallback to local storage specific error if Firestore fails
-                                const localEmailExists = currentSignups.some(u => u && u.email && u.email.toLowerCase() === email);
-                                if (localEmailExists) {
-                                    alert("비밀번호가 일치하지 않습니다.");
-                                } else {
-                                    alert("존재하지 않는 이메일 주소입니다. 가입 정보를 확인해 주세요.");
-                                }
                             }
+                        }
+
+                        // If not found anywhere or mismatch occurred and returned, check local email existence for diagnostic alert
+                        const localEmailExists = currentSignups.some(u => u && u.email && u.email.toLowerCase() === email);
+                        if (localEmailExists) {
+                            alert("비밀번호가 일치하지 않습니다.");
                         } else {
-                            // If db is not initialized, check local storage specifically
-                            const localEmailExists = currentSignups.some(u => u && u.email && u.email.toLowerCase() === email);
-                            if (localEmailExists) {
-                                alert("비밀번호가 일치하지 않습니다.");
-                            } else {
-                                alert("존재하지 않는 이메일 주소입니다. 가입 정보를 확인해 주세요.");
-                            }
+                            alert("존재하지 않는 이메일 주소입니다. 가입 정보를 확인해 주세요.");
                         }
                     }
                 } catch (error) {
