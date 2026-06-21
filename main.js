@@ -915,7 +915,7 @@ const router = {
                     </div>
                     <div class="card" style="padding:32px;">
                         <div style="margin-bottom:16px;">
-                            <label class="form-label">Name</label>
+                            <label class="form-label">Name (Optional)</label>
                             <input type="text" id="join-name" class="input-field" placeholder="이름을 입력하세요">
                         </div>
                         <div style="margin-bottom:16px;">
@@ -932,71 +932,88 @@ const router = {
             `;
             
             document.getElementById('btn-submit-signup').onclick = async () => {
-                const name = document.getElementById('join-name').value.trim();
-                const email = document.getElementById('join-email').value.trim();
-                const pw = document.getElementById('join-pw').value.trim();
-                
-                if (!name || !email || !pw) {
-                    alert("모든 필드를 입력해 주세요.");
-                    return;
-                }
+                try {
+                    let name = document.getElementById('join-name').value.trim();
+                    const email = document.getElementById('join-email').value.trim();
+                    const pw = document.getElementById('join-pw').value.trim();
+                    
+                    if (!email || !pw) {
+                        alert("이메일과 비밀번호를 모두 입력해 주세요.");
+                        return;
+                    }
 
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) {
-                    alert("이메일의 형식이 유효하지 않습니다.");
-                    const emailInput = document.getElementById('join-email');
-                    emailInput.focus();
-                    return;
-                }
-                
-                // Save signup
-                const signupData = {
-                    name,
-                    email,
-                    pw, // save password locally for login verification
-                    timestamp: new Date().toLocaleString('ko-KR')
-                };
-                
-                // LocalStorage save
-                let currentSignups = JSON.parse(localStorage.getItem('zipp_signups') || '[]');
-                currentSignups.push(signupData);
-                localStorage.setItem('zipp_signups', JSON.stringify(currentSignups));
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        alert("이메일의 형식이 유효하지 않습니다.");
+                        const emailInput = document.getElementById('join-email');
+                        emailInput.focus();
+                        return;
+                    }
 
-                // Send email notification to admin via FormSubmit
-                fetch("https://formsubmit.co/ajax/pvtmed1590@gmail.com", {
-                    method: "POST",
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        Name: name,
-                        Email: email,
-                        _subject: "ZIPP 신규 회원가입 알림",
-                        message: `ZIPP 플랫폼에 새로운 회원이 가입했습니다.\n\n이름: ${name}\n이메일: ${email}`
-                    })
-                }).catch(err => console.warn("Email send failed:", err));
-                
-                // Firestore save if online (background)
-                if (db) {
-                    (async () => {
-                        try {
-                            const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
-                            await addDoc(collection(db, "signups"), {
-                                name,
-                                email,
-                                timestamp: new Date().toISOString()
-                            });
-                            console.log("Firestore signup logged successfully.");
-                        } catch (e) {
-                            console.warn("Firestore save failed, saved locally instead.", e);
-                        }
-                    })();
+                    if (!name) {
+                        name = email.split('@')[0]; // Default to email username if Name is empty
+                    }
+                    
+                    // Save signup
+                    const signupData = {
+                        name,
+                        email,
+                        pw, // save password locally for login verification
+                        timestamp: new Date().toLocaleString('ko-KR')
+                    };
+                    
+                    // LocalStorage save
+                    try {
+                        let currentSignups = JSON.parse(localStorage.getItem('zipp_signups') || '[]');
+                        currentSignups.push(signupData);
+                        localStorage.setItem('zipp_signups', JSON.stringify(currentSignups));
+                    } catch (e) {
+                        console.warn("LocalStorage save failed:", e);
+                    }
+
+                    // Send email notification to admin via FormSubmit
+                    try {
+                        fetch("https://formsubmit.co/ajax/pvtmed1590@gmail.com", {
+                            method: "POST",
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                Name: name,
+                                Email: email,
+                                _subject: "ZIPP 신규 회원가입 알림",
+                                message: `ZIPP 플랫폼에 새로운 회원이 가입했습니다.\n\n이름: ${name}\n이메일: ${email}`
+                            })
+                        }).catch(err => console.warn("Email send failed:", err));
+                    } catch (err) {
+                        console.warn("Email fetch initiation failed:", err);
+                    }
+                    
+                    // Firestore save if online (background)
+                    if (db) {
+                        (async () => {
+                            try {
+                                const { collection, addDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+                                await addDoc(collection(db, "signups"), {
+                                    name,
+                                    email,
+                                    timestamp: new Date().toISOString()
+                                });
+                                console.log("Firestore signup logged successfully.");
+                            } catch (e) {
+                                console.warn("Firestore save failed, saved locally instead.", e);
+                            }
+                        })();
+                    }
+                    
+                    // Log in user locally
+                    state.user = { name: name, id: 'user_' + Date.now() };
+                    router.navigate('signupSuccess');
+                } catch (error) {
+                    console.error("Signup handler failed:", error);
+                    alert("회원가입 처리 중 오류가 발생했습니다. 다시 시도해 주세요: " + error.message);
                 }
-                
-                // Log in user locally
-                state.user = { name: name, id: 'user_' + Date.now() };
-                router.navigate('signupSuccess');
             };
         },
         
@@ -1043,23 +1060,34 @@ const router = {
             `;
             
             document.getElementById('btn-submit-login').onclick = () => {
-                const email = document.getElementById('login-email').value.trim();
-                const pw = document.getElementById('login-pw').value.trim();
-                
-                if (!email || !pw) {
-                    alert("이메일과 비밀번호를 모두 입력해 주세요.");
-                    return;
-                }
-                
-                const currentSignups = JSON.parse(localStorage.getItem('zipp_signups') || '[]');
-                const user = currentSignups.find(u => u.email === email);
-                
-                if (user && user.pw === pw) {
-                    state.user = { name: user.name, id: 'user_' + Date.now() };
-                    alert(`${user.name}님, 환영합니다!`);
-                    router.navigate('home');
-                } else {
-                    alert("이메일 또는 비밀번호가 일치하지 않습니다.");
+                try {
+                    const email = document.getElementById('login-email').value.trim();
+                    const pw = document.getElementById('login-pw').value.trim();
+                    
+                    if (!email || !pw) {
+                        alert("이메일과 비밀번호를 모두 입력해 주세요.");
+                        return;
+                    }
+                    
+                    let currentSignups = [];
+                    try {
+                        currentSignups = JSON.parse(localStorage.getItem('zipp_signups') || '[]');
+                    } catch (e) {
+                        console.warn("LocalStorage read failed:", e);
+                    }
+                    
+                    const user = currentSignups.find(u => u.email === email);
+                    
+                    if (user && user.pw === pw) {
+                        state.user = { name: user.name, id: 'user_' + Date.now() };
+                        alert(`${user.name}님, 환영합니다!`);
+                        router.navigate('home');
+                    } else {
+                        alert("이메일 또는 비밀번호가 일치하지 않습니다.");
+                    }
+                } catch (error) {
+                    console.error("Login handler failed:", error);
+                    alert("로그인 처리 중 오류가 발생했습니다: " + error.message);
                 }
             };
         }
@@ -1072,6 +1100,8 @@ const router = {
         window.scrollTo(0, 0);
     }
 };
+
+window.router = router;
 
 function renderHeader() {
     const nav = document.getElementById('header-nav');
